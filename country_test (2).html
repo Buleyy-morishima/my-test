@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测一测你最适合生活在哪个国家</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif; max-width: 700px; margin: 20px auto; padding: 20px; background: #f5efe6; }
+        h1 { text-align: center; color: #5a3e2b; font-size: 26px; margin-bottom: 10px; }
+        .subtitle { text-align: center; color: #8b7355; margin-bottom: 30px; font-size: 15px; }
+        .question { margin-bottom: 28px; padding: 22px 20px; background: white; border-radius: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.04); }
+        .q-title { font-weight: 700; color: #3e2c1f; margin-bottom: 16px; font-size: 16px; line-height: 1.5; }
+        .options { display: flex; flex-direction: column; gap: 10px; }
+        label { display: flex; align-items: flex-start; padding: 12px 14px; background: #faf7f2; border: 2px solid transparent; border-radius: 12px; cursor: pointer; transition: all 0.2s; font-size: 15px; color: #4a3a2f; }
+        label:hover { border-color: #c4a88b; background: #fffdf8; }
+        input[type="radio"] { appearance: none; -webkit-appearance: none; min-width: 20px; width: 20px; height: 20px; border: 2px solid #c4a88b; border-radius: 50%; margin-right: 12px; margin-top: 2px; cursor: pointer; position: relative; }
+        input[type="radio"]:checked { background: #c4a88b; box-shadow: inset 0 0 0 5px white; }
+        .submit-btn { display: block; width: 100%; padding: 16px; margin: 30px 0 20px; background: #5a3e2b; color: white; font-size: 18px; font-weight: bold; border: none; border-radius: 14px; cursor: pointer; letter-spacing: 2px; transition: 0.2s; }
+        .submit-btn:hover { background: #7a5c4f; }
+        #result { display: none; padding: 30px; background: white; border-radius: 20px; margin-top: 30px; text-align: center; box-shadow: 0 8px 24px rgba(0,0,0,0.1); }
+        .result-emoji { font-size: 60px; margin-bottom: 10px; }
+        .result-country { font-size: 32px; font-weight: bold; color: #5a3e2b; margin: 10px 0; }
+        .result-desc { font-size: 16px; color: #4a3a2f; line-height: 1.8; margin: 16px 0; }
+        .result-score { margin-top: 20px; font-size: 13px; color: #9b8b7a; }
+        .error-message { color: #c44; text-align: center; margin-top: 10px; display: none; }
+    </style>
+</head>
+<body>
+    <h1>🌍 测一测你最适合生活在哪个国家</h1>
+    <p class="subtitle">20道题，从生活方式、价值观到审美偏好，找到你灵魂的真正归属</p>
+    <form id="testForm">
+        <div id="questionsContainer"></div>
+        <button type="submit" class="submit-btn">✨ 提交，寻找我的国度</button>
+        <p class="error-message" id="errorMsg">请回答完所有题目再提交哦～</p>
+    </form>
+    <div id="result"></div>
+
+    <script>
+        // ==================== 题库：20道题，每题4个选项，每个选项对应一个最匹配的国家 ====================
+        const questions = [
+            {
+                question: "1. 周末早晨醒来，你希望窗外的景色是怎样的？",
+                options: [
+                    { text: "A. 静谧的雪山下，晨雾笼罩着针叶林", country: "瑞士" },
+                    { text: "B. 热烈的阳光洒在彩色房子上，远处有海浪声", country: "西班牙" },
+                    { text: "C. 现代高楼与古老神社并存，街道干净有序", country: "日本" },
+                    { text: "D. 一望无际的红枫林，空气清冽通透", country: "加拿大" }
+                ]
+            },
+            {
+                question: "2. 你理想中的工作状态更接近哪一种？",
+                options: [
+                    { text: "A. 高效紧凑，在竞争中获得成就感", country: "新加坡" },
+                    { text: "B. 创意自由，不拘泥于固定时间地点", country: "意大利" },
+                    { text: "C. 稳定有序，职责分明，下班后就是自己的生活", country: "芬兰" },
+                    { text: "D. 团队协作热烈，充满活力和激情", country: "巴西" }
+                ]
+            },
+            {
+                question: "3. 和朋友聚会时，你最喜欢哪种氛围？",
+                options: [
+                    { text: "A. 安静地吃饭、深聊，两三人足矣", country: "日本" },
+                    { text: "B. 热闹的酒吧或派对，大家一起跳舞", country: "巴西" },
+                    { text: "C. 户外烧烤、晒太阳，轻松随意", country: "澳大利亚" },
+                    { text: "D. 在有格调的咖啡馆或小酒馆小酌", country: "意大利" }
+                ]
+            },
+            {
+                question: "4. 旅行的方式，你更偏向？",
+                options: [
+                    { text: "A. 精心规划路线，博物馆和古迹一个不落", country: "韩国" },
+                    { text: "B. 说走就走，享受迷路的惊喜", country: "西班牙" },
+                    { text: "C. 独自背包，融入当地人的生活", country: "芬兰" },
+                    { text: "D. 找一个小镇住下，深度感受日常", country: "瑞士" }
+                ]
+            },
+            {
+                question: "5. 你更喜欢什么样的饮食体验？",
+                options: [
+                    { text: "A. 精致小巧的菜肴，注重视觉和季节性", country: "日本" },
+                    { text: "B. 丰富多样的前菜拼盘，搭配红酒", country: "意大利" },
+                    { text: "C. 新鲜捕捞的海鲜，简单原味", country: "澳大利亚" },
+                    { text: "D. 烤肉、火锅等热闹的分享式大餐", country: "巴西" }
+                ]
+            },
+            {
+                question: "6. 当你感到疲惫时，哪种方式最治愈你？",
+                options: [
+                    { text: "A. 独自在桑拿房里放空，然后跳进湖里", country: "芬兰" },
+                    { text: "B. 在海边散步，让海风吹走烦恼", country: "西班牙" },
+                    { text: "C. 去热闹的集市闲逛，感受人间烟火", country: "韩国" },
+                    { text: "D. 躺在公园草坪上，看云卷云舒", country: "加拿大" }
+                ]
+            },
+            {
+                question: "7. 对于“家”的布置，你最看重什么？",
+                options: [
+                    { text: "A. 极简、功能性强，没有任何多余的东西", country: "瑞士" },
+                    { text: "B. 色彩丰富，充满艺术感和手工艺品", country: "意大利" },
+                    { text: "C. 温暖舒适的木质家具，有书香和茶香", country: "日本" },
+                    { text: "D. 有很多绿植，阳光充沛，像个室内花园", country: "新加坡" }
+                ]
+            },
+            {
+                question: "8. 你在人际关系中最重视什么？",
+                options: [
+                    { text: "A. 礼貌和边界感，不轻易打扰别人", country: "芬兰" },
+                    { text: "B. 热情坦诚，朋友就是家人", country: "巴西" },
+                    { text: "C. 长久稳定的信任，愿意为朋友两肋插刀", country: "韩国" },
+                    { text: "D. 轻松愉快，保持分寸但随时可以约出来", country: "澳大利亚" }
+                ]
+            },
+            {
+                question: "9. 你对气候的偏好是？",
+                options: [
+                    { text: "A. 四季分明，秋天有红叶冬天有雪", country: "瑞士" },
+                    { text: "B. 常年温暖，阳光充足但不会太热", country: "西班牙" },
+                    { text: "C. 凉爽湿润，空气清新", country: "加拿大" },
+                    { text: "D. 热带但高效便利，室内永远舒适", country: "新加坡" }
+                ]
+            },
+            {
+                question: "10. 面对一项新技能或知识，你通常怎么学习？",
+                options: [
+                    { text: "A. 按照体系化的课程，一步步进阶", country: "日本" },
+                    { text: "B. 直接上手实践，边做边学", country: "澳大利亚" },
+                    { text: "C. 加入学习小组，互相激励讨论", country: "韩国" },
+                    { text: "D. 沉浸在安静环境里独自钻研", country: "芬兰" }
+                ]
+            },
+            {
+                question: "11. 你理想中的城市夜晚是什么样子？",
+                options: [
+                    { text: "A. 霓虹闪烁，24小时不打烊，随时能买到需要的东西", country: "新加坡" },
+                    { text: "B. 人们在广场上散步，街头艺人弹着吉他", country: "意大利" },
+                    { text: "C. 安静安逸，只有便利店和路灯亮着", country: "日本" },
+                    { text: "D. 河岸边聚集着年轻人，放着音乐随性起舞", country: "巴西" }
+                ]
+            },
+            {
+                question: "12. 你更欣赏哪种艺术形式？",
+                options: [
+                    { text: "A. 印象派油画，光影与色彩的流动", country: "意大利" },
+                    { text: "B. 极简主义设计，线条与功能的美", country: "瑞士" },
+                    { text: "C. 传统水墨或浮世绘，意境与留白", country: "日本" },
+                    { text: "D. 街头涂鸦和热情奔放的壁画", country: "西班牙" }
+                ]
+            },
+            {
+                question: "13. 如果参加一个节日庆典，你最期待哪种体验？",
+                options: [
+                    { text: "A. 漫天烟花，穿着传统服饰逛庙会", country: "韩国" },
+                    { text: "B. 色彩斑斓的狂欢节，花车游行和桑巴", country: "巴西" },
+                    { text: "C. 篝火旁的安静庆祝，聆听大自然的声音", country: "芬兰" },
+                    { text: "D. 葡萄酒节，美食与灯光交错的夜晚", country: "意大利" }
+                ]
+            },
+            {
+                question: "14. 对于“规则”的态度，你更接近？",
+                options: [
+                    { text: "A. 规则让社会高效运转，应该遵守", country: "瑞士" },
+                    { text: "B. 规则是死的，人要根据情况灵活变通", country: "意大利" },
+                    { text: "C. 尽量遵守，但不会过分死板", country: "加拿大" },
+                    { text: "D. 表面遵守，私底下有自己的做法", country: "西班牙" }
+                ]
+            },
+            {
+                question: "15. 你更想居住在哪里？",
+                options: [
+                    { text: "A. 都市中心的高层公寓，享受顶级便利", country: "新加坡" },
+                    { text: "B. 海边小镇的房子，带一个小花园", country: "西班牙" },
+                    { text: "C. 湖畔的木屋，与自然零距离", country: "芬兰" },
+                    { text: "D. 传统街区里的现代住宅，安静又方便", country: "日本" }
+                ]
+            },
+            {
+                question: "16. 在社交中，你通常给人什么印象？",
+                options: [
+                    { text: "A. 初见高冷，熟悉后很温暖", country: "芬兰" },
+                    { text: "B. 开朗大方，很容易和人打成一片", country: "澳大利亚" },
+                    { text: "C. 礼貌周到，有恰到好处的距离感", country: "瑞士" },
+                    { text: "D. 热情似火，表达直接而真诚", country: "巴西" }
+                ]
+            },
+            {
+                question: "17. 哪种颜色组合让你感觉最舒服？",
+                options: [
+                    { text: "A. 白、灰、原木色，干净克制", country: "日本" },
+                    { text: "B. 蓝色与白色，清新自由", country: "加拿大" },
+                    { text: "C. 红、黄、橙，浓烈鲜活", country: "西班牙" },
+                    { text: "D. 墨绿与暗金，低调奢华", country: "意大利" }
+                ]
+            },
+            {
+                question: "18. 当你面临重要决定时，主要依靠什么？",
+                options: [
+                    { text: "A. 详细的数据分析和理性判断", country: "新加坡" },
+                    { text: "B. 直觉和内心的声音", country: "意大利" },
+                    { text: "C. 咨询信任的朋友和家人", country: "韩国" },
+                    { text: "D. 权衡利弊后，选择最可持续的方案", country: "瑞士" }
+                ]
+            },
+            {
+                question: "19. 你理想中的退休生活是？",
+                options: [
+                    { text: "A. 环游世界，在不同的国家短期居住", country: "澳大利亚" },
+                    { text: "B. 在小镇教年轻人手艺，享受慢时光", country: "瑞士" },
+                    { text: "C. 有一块菜地，每天读书、劳作、散步", country: "芬兰" },
+                    { text: "D. 和一大群朋友住得近，每天聚会聊天", country: "巴西" }
+                ]
+            },
+            {
+                question: "20. 用一句话总结你的人生哲学？",
+                options: [
+                    { text: "A. “好好生活，保持节奏”", country: "日本" },
+                    { text: "B. “生命在于体验，不要留有遗憾”", country: "西班牙" },
+                    { text: "C. “简单是终极的复杂”", country: "瑞士" },
+                    { text: "D. “爱与被爱是最大的幸福”", country: "韩国" }
+                ]
+            }
+        ];
+
+        // ==================== 国家结果描述与对应 emoji ====================
+        const countryData = {
+            "日本": { emoji: "🗾", desc: "你骨子里向往秩序中的宁静，在传统与现代之间找到平衡。你喜欢细节之美，欣赏那种克制而深情的温柔。无论是春日的樱花，还是深夜的便利店，都让你感到心安。" },
+            "意大利": { emoji: "🇮🇹", desc: "你是一个不折不扣的生活艺术家。美食、阳光、艺术和人情味是你的维他命。你讨厌急匆匆的早晨，愿意为一顿美好的午餐花上三个小时，因为你相信——享受当下就是最大的正经事。" },
+            "瑞士": { emoji: "🇨🇭", desc: "你追求品质、精准和内心的平静。你不需要太多观众，湖光山色就是最好的陪伴。你喜欢一切都安排得妥当，在规则之下享受最大的自由，像瑞士军刀一样可靠而优雅。" },
+            "西班牙": { emoji: "🇪🇸", desc: "你的灵魂是弗拉门戈的节奏，热情、自由、充满生命力。你讨厌无聊和束缚，认为人生就是一场永不落幕的节日。午睡、塔帕斯、深夜的街头闲聊，都是你活着的证据。" },
+            "加拿大": { emoji: "🇨🇦", desc: "你温和、谦逊、深爱大自然。广袤的森林和清澈的湖泊是你的充电站。你尊重多元，待人友善，喜欢那种被枫叶和礼貌包围的舒适感。你相信生活不只有打拼，还有诗和远方的枫糖浆。" },
+            "澳大利亚": { emoji: "🇦🇺", desc: "你天生带着阳光和海盐的味道，随性、乐观、热爱户外。你讨厌过度复杂的事情，相信最美好的东西都是免费的——沙滩、阳光、朋友和烧烤。你永远保留说走就走的勇气。" },
+            "韩国": { emoji: "🇰🇷", desc: "你充满能量，喜欢快节奏的现代感和浓烈的情感联结。你欣赏那种外冷内热的深情，享受深夜的路边摊、KTV和彻夜长谈。你像一部制作精良的韩剧，既有热血也有细腻的泪点。" },
+            "巴西": { emoji: "🇧🇷", desc: "你的内心住着热带雨林的自由与奔放。你乐观到骨子里，认为没有什么事是一场派对解决不了的。音乐、舞蹈和密集的社交是你的燃料，日子应该过得像狂欢节一样五彩斑斓。" },
+            "芬兰": { emoji: "🇫🇮", desc: "你珍视个人空间，在安静中汲取力量。你不是不爱热闹，只是更享受独处的深度。桑拿、森林、极光是你理想生活的关键词。你外表冷静，内心却有一团温柔的火焰。" },
+            "新加坡": { emoji: "🇸🇬", desc: "你追求高效、多元和未来感。你喜欢在花园城市里享受最顶级的便利，欣赏不同文化如何和谐共存。你适应力极强，永远保持优雅和前瞻，就像滨海湾的灯光秀，璀璨而精准。" }
+        };
+
+        // ==================== 动态生成题目 ====================
+        const container = document.getElementById('questionsContainer');
+        questions.forEach((q, idx) => {
+            const div = document.createElement('div');
+            div.className = 'question';
+            const optionsHTML = q.options.map((opt, oidx) => `
+                <label>
+                    <input type="radio" name="q${idx}" value="${opt.country}" required>
+                    ${opt.text}
+                </label>
+            `).join('');
+            div.innerHTML = `<div class="q-title">${q.question}</div><div class="options">${optionsHTML}</div>`;
+            container.appendChild(div);
+        });
+
+        // ==================== 提交与计分 ====================
+        document.getElementById('testForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const errorMsg = document.getElementById('errorMsg');
+            const allAnswered = questions.every((_, idx) => {
+                return document.querySelector(`input[name="q${idx}"]:checked`);
+            });
+
+            if (!allAnswered) {
+                errorMsg.style.display = 'block';
+                return;
+            }
+            errorMsg.style.display = 'none';
+
+            // 统计每个国家的得分
+            const scores = {};
+            questions.forEach((q, idx) => {
+                const selected = document.querySelector(`input[name="q${idx}"]:checked`);
+                if (selected) {
+                    const country = selected.value;
+                    scores[country] = (scores[country] || 0) + 1;
+                }
+            });
+
+            // 找出得分最高的国家
+            let maxScore = 0;
+            let resultCountry = "日本"; // 默认
+            for (let country in scores) {
+                if (scores[country] > maxScore) {
+                    maxScore = scores[country];
+                    resultCountry = country;
+                }
+            }
+
+            // 如果有并列，随机选一个（或者保持第一个出现的）
+            const topCountries = Object.entries(scores).filter(([_, s]) => s === maxScore).map(([c]) => c);
+            if (topCountries.length > 1) {
+                // 避免随机性导致刷新结果变化，取第一个出现的
+                resultCountry = topCountries[0];
+            }
+
+            const data = countryData[resultCountry];
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = `
+                <div class="result-emoji">${data.emoji}</div>
+                <div class="result-country">${resultCountry}</div>
+                <div class="result-desc">${data.desc}</div>
+                <div class="result-score">你与 ${resultCountry} 的灵魂契合度为 ${maxScore}/20，共获得 ${maxScore} 次共鸣</div>
+            `;
+            resultDiv.style.display = 'block';
+            resultDiv.scrollIntoView({ behavior: 'smooth' });
+        });
+    </script>
+</body>
+</html>
