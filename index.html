@@ -22,7 +22,6 @@
         .result-emoji { font-size: 60px; margin-bottom: 10px; }
         .result-country { font-size: 32px; font-weight: bold; color: #5a3e2b; margin: 10px 0; }
         .result-desc { font-size: 16px; color: #4a3a2f; line-height: 1.8; margin: 16px 0; }
-        .result-score { margin-top: 20px; font-size: 13px; color: #9b8b7a; }
         .error-message { color: #c44; text-align: center; margin-top: 10px; display: none; }
     </style>
 </head>
@@ -240,7 +239,7 @@
         questions.forEach((q, idx) => {
             const div = document.createElement('div');
             div.className = 'question';
-            const optionsHTML = q.options.map((opt, oidx) => `
+            const optionsHTML = q.options.map((opt) => `
                 <label>
                     <input type="radio" name="q${idx}" value="${opt.country}" required>
                     ${opt.text}
@@ -276,7 +275,7 @@
 
             // 找出得分最高的国家
             let maxScore = 0;
-            let resultCountry = "日本"; // 默认
+            let resultCountry = "日本";
             for (let country in scores) {
                 if (scores[country] > maxScore) {
                     maxScore = scores[country];
@@ -284,10 +283,9 @@
                 }
             }
 
-            // 如果有并列，随机选一个（或者保持第一个出现的）
+            // 如果有并列，取第一个出现的
             const topCountries = Object.entries(scores).filter(([_, s]) => s === maxScore).map(([c]) => c);
             if (topCountries.length > 1) {
-                // 避免随机性导致刷新结果变化，取第一个出现的
                 resultCountry = topCountries[0];
             }
 
@@ -297,7 +295,6 @@
                 <div class="result-emoji">${data.emoji}</div>
                 <div class="result-country">${resultCountry}</div>
                 <div class="result-desc">${data.desc}</div>
-                <div class="result-score">你与 ${resultCountry} 的灵魂契合度为 ${maxScore}/20，共获得 ${maxScore} 次共鸣</div>
             `;
             resultDiv.style.display = 'block';
             resultDiv.scrollIntoView({ behavior: 'smooth' });
