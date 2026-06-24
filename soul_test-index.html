@@ -3,273 +3,178 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>测一测你的灵魂底色</title>
+    <title>测测你的人格底色</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif; max-width: 700px; margin: 20px auto; padding: 20px; background: #f8f4f0; }
-        h1 { text-align: center; color: #4a3b32; font-size: 26px; margin-bottom: 6px; }
-        .subtitle { text-align: center; color: #9b8579; margin-bottom: 30px; font-size: 15px; }
-        .question { margin-bottom: 28px; padding: 22px 20px; background: white; border-radius: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
-        .q-title { font-weight: 700; color: #3e2c1f; margin-bottom: 16px; font-size: 16px; line-height: 1.5; }
+        body {
+            font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #ece4f2 0%, #f9f0f5 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            max-width: 680px;
+            width: 100%;
+            background: rgba(255,255,255,0.75);
+            backdrop-filter: blur(20px);
+            border-radius: 32px;
+            padding: 30px 24px;
+            box-shadow: 0 20px 50px rgba(120, 80, 120, 0.12);
+            margin: 20px 0;
+        }
+        h1 {
+            text-align: center;
+            color: #4a3a5e;
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #7a6b8a;
+            margin-bottom: 32px;
+            font-size: 15px;
+        }
+        .question {
+            margin-bottom: 24px;
+            padding: 22px 20px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+            transition: transform 0.2s;
+        }
+        .question:hover { transform: translateY(-2px); }
+        .q-title {
+            font-weight: 700;
+            color: #3e2c4f;
+            margin-bottom: 16px;
+            font-size: 16px;
+            line-height: 1.5;
+        }
         .options { display: flex; flex-direction: column; gap: 10px; }
-        label { display: flex; align-items: flex-start; padding: 12px 14px; background: #faf7f3; border: 2px solid transparent; border-radius: 12px; cursor: pointer; transition: all 0.2s; font-size: 15px; color: #4a3a2f; }
-        label:hover { border-color: #d4b896; background: #fffdf9; }
-        input[type="radio"] { appearance: none; -webkit-appearance: none; min-width: 20px; width: 20px; height: 20px; border: 2px solid #c4a88b; border-radius: 50%; margin-right: 12px; margin-top: 2px; cursor: pointer; position: relative; }
-        input[type="radio"]:checked { background: #c4a88b; box-shadow: inset 0 0 0 5px white; }
-        .submit-btn { display: block; width: 100%; padding: 16px; margin: 30px 0 20px; background: #5a3e2b; color: white; font-size: 18px; font-weight: bold; border: none; border-radius: 14px; cursor: pointer; letter-spacing: 2px; transition: 0.2s; }
-        .submit-btn:hover { background: #7a5c4f; }
-        #result { display: none; padding: 30px; background: white; border-radius: 20px; margin-top: 30px; text-align: center; box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
-        .result-color-box { width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        .result-name { font-size: 28px; font-weight: bold; color: #4a3b32; margin-bottom: 10px; }
-        .result-desc { font-size: 16px; color: #5a4a3f; line-height: 1.8; margin: 16px 0; }
-        .error-message { color: #c44; text-align: center; margin-top: 10px; display: none; }
+        label {
+            display: flex;
+            align-items: flex-start;
+            padding: 14px 16px;
+            background: #faf8fc;
+            border: 2px solid transparent;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 15px;
+            color: #4a3a5e;
+        }
+        label:hover { background: #f5f0fa; border-color: #b8a9c9; }
+        input[type="radio"] {
+            appearance: none;
+            -webkit-appearance: none;
+            min-width: 20px; width: 20px; height: 20px;
+            border: 2px solid #b8a9c9;
+            border-radius: 50%;
+            margin-right: 12px; margin-top: 2px;
+            cursor: pointer; transition: all 0.2s;
+        }
+        input[type="radio"]:checked {
+            background: #9b8aaf;
+            border-color: #7a688f;
+            box-shadow: inset 0 0 0 5px white, 0 0 0 3px rgba(155,138,175,0.3);
+        }
+        .submit-btn {
+            display: block; width: 100%; padding: 18px; margin: 36px 0 16px;
+            background: linear-gradient(135deg, #5e4a6e, #4a3a5e);
+            color: white; font-size: 19px; font-weight: bold;
+            border: none; border-radius: 16px; cursor: pointer;
+            letter-spacing: 2px; transition: all 0.3s;
+            box-shadow: 0 8px 25px rgba(74,58,94,0.3);
+        }
+        .submit-btn:hover {
+            background: linear-gradient(135deg, #705a82, #5e4a6e);
+            box-shadow: 0 12px 30px rgba(74,58,94,0.4);
+            transform: translateY(-2px);
+        }
+        .submit-btn:active { transform: translateY(0px); }
+        #result {
+            display: none; padding: 32px 24px; background: white;
+            border-radius: 24px; margin-top: 32px; text-align: center;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+            animation: fadeInUp 0.5s ease;
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .result-color {
+            display: inline-block;
+            width: 60px; height: 60px; border-radius: 50%;
+            margin-bottom: 12px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+        .result-name {
+            font-size: 34px; font-weight: bold; margin: 12px 0 18px;
+        }
+        .divider {
+            width: 60px; height: 3px; margin: 0 auto 24px;
+            border-radius: 2px;
+        }
+        .result-desc {
+            font-size: 16px; line-height: 1.9; text-align: left;
+            margin: 0;
+        }
+        .error-message {
+            color: #c44; text-align: center; margin-top: 12px;
+            display: none; font-weight: 500;
+        }
     </style>
 </head>
 <body>
-    <h1>🎨 测一测你的灵魂底色</h1>
-    <p class="subtitle">20个生活瞬间，映照出你灵魂深处的那一抹颜色</p>
-    <form id="testForm">
-        <div id="questionsContainer"></div>
-        <button type="submit" class="submit-btn">✨ 提交，映出我的底色</button>
-        <p class="error-message" id="errorMsg">请回答完所有题目再提交哦～</p>
-    </form>
-    <div id="result"></div>
+    <div class="container">
+        <h1>🎨 测测你的人格底色</h1>
+        <p class="subtitle">20道题 · 照见你性格最深处的颜色</p>
+        <form id="testForm">
+            <div id="questionsContainer"></div>
+            <button type="submit" class="submit-btn">✨ 提交，看见我的底色</button>
+            <p class="error-message" id="errorMsg">请回答完所有题目再提交哦～</p>
+        </form>
+        <div id="result"></div>
+    </div>
 
     <script>
-        // ==================== 题库：20道题，每题4个选项 ====================
         const questions = [
-            {
-                question: "1. 独处的时候，你通常会做什么？",
-                options: [
-                    { text: "A. 看书、听音乐，沉浸在安静的时光里", color: "月白" },
-                    { text: "B. 整理房间，做手工或烘焙", color: "苔绿" },
-                    { text: "C. 随便写点东西，记录当下的思绪", color: "烟紫" },
-                    { text: "D. 什么也不做，发呆看窗外就很放松", color: "雾蓝" }
-                ]
-            },
-            {
-                question: "2. 哪种天气最让你感到自在？",
-                options: [
-                    { text: "A. 细雨绵绵，空气里有泥土的味道", color: "苔绿" },
-                    { text: "B. 晴空万里，阳光明亮但不灼热", color: "晨光黄" },
-                    { text: "C. 薄雾笼罩，一切都像加了柔光滤镜", color: "雾蓝" },
-                    { text: "D. 微凉的阴天，适合裹着毯子", color: "星灰" }
-                ]
-            },
-            {
-                question: "3. 朋友心情不好的时候，你通常会？",
-                options: [
-                    { text: "A. 安静地陪在身边，不多过问", color: "雾蓝" },
-                    { text: "B. 带对方出去散心，吃好吃的", color: "晨光黄" },
-                    { text: "C. 认真倾听，给出温暖的回应", color: "珊瑚橘" },
-                    { text: "D. 用理性帮对方分析问题", color: "月白" }
-                ]
-            },
-            {
-                question: "4. 你对“家”的感觉更接近？",
-                options: [
-                    { text: "A. 一个可以彻底放松的庇护所", color: "星灰" },
-                    { text: "B. 充满绿植和阳光的治愈角落", color: "苔绿" },
-                    { text: "C. 简单干净，没有什么多余的东西", color: "月白" },
-                    { text: "D. 有暖光、有香气、有温柔的织物", color: "琥珀棕" }
-                ]
-            },
-            {
-                question: "5. 如果可以选一种超能力，你会选？",
-                options: [
-                    { text: "A. 治愈他人的伤痛", color: "珊瑚橘" },
-                    { text: "B. 读懂别人的心思", color: "烟紫" },
-                    { text: "C. 让时间暂停，拥有更多自己的空间", color: "雾蓝" },
-                    { text: "D. 永远精力充沛，做更多想做的事", color: "晨光黄" }
-                ]
-            },
-            {
-                question: "6. 遇到挫折时，你的第一反应是？",
-                options: [
-                    { text: "A. 先让自己安静下来，慢慢消化", color: "星灰" },
-                    { text: "B. 找最亲近的人倾诉", color: "珊瑚橘" },
-                    { text: "C. 立刻想办法解决，不喜欢拖延", color: "月白" },
-                    { text: "D. 告诉自己一切都会过去的，保持乐观", color: "晨光黄" }
-                ]
-            },
-            {
-                question: "7. 哪一种花更像你？",
-                options: [
-                    { text: "A. 白玫瑰——安静清冷，有自己的坚持", color: "月白" },
-                    { text: "B. 向日葵——永远朝着光，温暖热烈", color: "晨光黄" },
-                    { text: "C. 薰衣草——温柔平和，带着淡淡的香气", color: "烟紫" },
-                    { text: "D. 尤加利叶——不张扬，但不可或缺", color: "苔绿" }
-                ]
-            },
-            {
-                question: "8. 你更喜欢怎样的旅行节奏？",
-                options: [
-                    { text: "A. 避开人群，探访安静的小巷和角落", color: "雾蓝" },
-                    { text: "B. 不做详细计划，随心漫步", color: "星灰" },
-                    { text: "C. 融入当地，像本地人一样生活几天", color: "琥珀棕" },
-                    { text: "D. 打卡经典地标，用照片记录回忆", color: "晨光黄" }
-                ]
-            },
-            {
-                question: "9. 哪种气味最能让你瞬间放松？",
-                options: [
-                    { text: "A. 下雨后泥土和青草的味道", color: "苔绿" },
-                    { text: "B. 被阳光晒过的棉被香", color: "晨光黄" },
-                    { text: "C. 旧书的油墨味或木质香", color: "琥珀棕" },
-                    { text: "D. 淡淡的白茶或皂香", color: "月白" }
-                ]
-            },
-            {
-                question: "10. 你更欣赏哪种类型的表达？",
-                options: [
-                    { text: "A. 克制而精准，点到为止", color: "月白" },
-                    { text: "B. 热烈而直接，毫无保留", color: "珊瑚橘" },
-                    { text: "C. 温柔而细腻，像在耳边低语", color: "烟紫" },
-                    { text: "D. 幽默而松弛，让人没有压力", color: "晨光黄" }
-                ]
-            },
-            {
-                question: "11. 夜晚躺在床上，你最容易想什么？",
-                options: [
-                    { text: "A. 反思今天，计划明天", color: "月白" },
-                    { text: "B. 幻想另一个平行世界的自己", color: "烟紫" },
-                    { text: "C. 想念某个远方的人或地方", color: "雾蓝" },
-                    { text: "D. 什么也不想，很快就睡着了", color: "苔绿" }
-                ]
-            },
-            {
-                question: "12. 如果在森林里盖一间小屋，你希望它是什么样？",
-                options: [
-                    { text: "A. 原木色，落地窗，与自然融为一体", color: "苔绿" },
-                    { text: "B. 白色调，干净极简，像艺术品", color: "月白" },
-                    { text: "C. 温暖的壁炉，柔软的沙发，堆满毛毯", color: "琥珀棕" },
-                    { text: "D. 有一整面书架，窗外是薄雾和松林", color: "雾蓝" }
-                ]
-            },
-            {
-                question: "13. 哪种颜色组合让你最有安全感？",
-                options: [
-                    { text: "A. 白 + 米色 + 浅灰", color: "星灰" },
-                    { text: "B. 奶咖 + 燕麦 + 陶土色", color: "琥珀棕" },
-                    { text: "C. 灰蓝 + 雾白 + 亚麻色", color: "雾蓝" },
-                    { text: "D. 橄榄绿 + 奶油白 + 浅木色", color: "苔绿" }
-                ]
-            },
-            {
-                question: "14. 你觉得自己最容易被哪种特质吸引？",
-                options: [
-                    { text: "A. 安静而坚定，像深海", color: "雾蓝" },
-                    { text: "B. 温柔而包容，像大地", color: "苔绿" },
-                    { text: "C. 热烈而真诚，像火焰", color: "珊瑚橘" },
-                    { text: "D. 通透而清醒，像月光", color: "月白" }
-                ]
-            },
-            {
-                question: "15. 拍照时，你更喜欢什么风格？",
-                options: [
-                    { text: "A. 清冷色调，有故事感的情绪片", color: "雾蓝" },
-                    { text: "B. 暖光+生活感，记录真实瞬间", color: "琥珀棕" },
-                    { text: "C. 明亮通透，充满笑容和阳光", color: "晨光黄" },
-                    { text: "D. 低饱和度，干净简洁的构图", color: "星灰" }
-                ]
-            },
-            {
-                question: "16. 你更喜欢怎样度过一个假期？",
-                options: [
-                    { text: "A. 窝在家里，享受与世隔绝的宁静", color: "星灰" },
-                    { text: "B. 和朋友一起，热热闹闹", color: "珊瑚橘" },
-                    { text: "C. 去一个陌生的地方，慢慢探索", color: "琥珀棕" },
-                    { text: "D. 回归自然，爬山、露营、看星星", color: "苔绿" }
-                ]
-            },
-            {
-                question: "17. 对你来说，“幸福”更接近？",
-                options: [
-                    { text: "A. 内心平静，不被外界干扰", color: "雾蓝" },
-                    { text: "B. 被爱的人需要和回应", color: "珊瑚橘" },
-                    { text: "C. 每天有值得期待的小事", color: "晨光黄" },
-                    { text: "D. 有充足的时间做自己", color: "星灰" }
-                ]
-            },
-            {
-                question: "18. 你觉得自己更像？",
-                options: [
-                    { text: "A. 清晨的第一缕光——安静但充满希望", color: "晨光黄" },
-                    { text: "B. 午后的云——柔软、自由、飘忽不定", color: "烟紫" },
-                    { text: "C. 黄昏的晚霞——浓烈又短暂，却让人记住", color: "珊瑚橘" },
-                    { text: "D. 深夜的星空——沉默却有无数故事", color: "雾蓝" }
-                ]
-            },
-            {
-                question: "19. 哪种状态的你最自在？",
-                options: [
-                    { text: "A. 不需要说话，也不用担心冷场", color: "星灰" },
-                    { text: "B. 被理解和接纳，可以完全做自己", color: "苔绿" },
-                    { text: "C. 充满干劲，正在为目标努力", color: "月白" },
-                    { text: "D. 和喜欢的人在一起，哪怕只是发发呆", color: "琥珀棕" }
-                ]
-            },
-            {
-                question: "20. 用一句话总结你的内在频率？",
-                options: [
-                    { text: "A. “深水静流，自有力量”", color: "雾蓝" },
-                    { text: "B. “向下扎根，向上生长”", color: "苔绿" },
-                    { text: "C. “温暖明亮，永不落山”", color: "晨光黄" },
-                    { text: "D. “在温柔中保持清醒”", color: "烟紫" }
-                ]
-            }
+            { question: "1. 独处时，哪种状态让你最舒服？", options: [{ text: "A. 看书、写日记，整理内心", color: "蔚蓝" },{ text: "B. 沉浸在一个创作或手工里", color: "苔绿" },{ text: "C. 和朋友线上聊天，刷有趣的视频", color: "暖橙" },{ text: "D. 规划未来，列出清晰的目标清单", color: "雾灰" }] },
+            { question: "2. 别人对你的第一印象通常是？", options: [{ text: "A. 安静温柔，有点距离感", color: "蔚蓝" },{ text: "B. 安静但有力量，让人安心", color: "苔绿" },{ text: "C. 热情开朗，很容易聊起来", color: "暖橙" },{ text: "D. 理性冷静，值得信赖", color: "雾灰" }] },
+            { question: "3. 面对突然的改变，你通常？", options: [{ text: "A. 先感受情绪，慢慢消化", color: "蔚蓝" },{ text: "B. 接受它，并从中找到新的节奏", color: "苔绿" },{ text: "C. 有点兴奋，觉得是新的可能", color: "暖橙" },{ text: "D. 快速分析利弊，调整计划", color: "雾灰" }] },
+            { question: "4. 哪种表达爱的方式更像你？", options: [{ text: "A. 写长长的文字，或者默默地陪伴", color: "蔚蓝" },{ text: "B. 用行动照顾对方，做实际的事", color: "苔绿" },{ text: "C. 热情赞美，频繁的拥抱和表达", color: "暖橙" },{ text: "D. 为对方解决问题，规划未来", color: "雾灰" }] },
+            { question: "5. 你更欣赏哪种类型的电影/书籍？", options: [{ text: "A. 细腻的情感片，有心理深度", color: "蔚蓝" },{ text: "B. 自然纪录片，或者关于成长的故事", color: "苔绿" },{ text: "C. 轻松喜剧，让人大笑的综艺", color: "暖橙" },{ text: "D. 悬疑推理，考验逻辑的科幻", color: "雾灰" }] },
+            { question: "6. 朋友情绪低落时，你倾向于？", options: [{ text: "A. 安静地听，给予情感上的共鸣", color: "蔚蓝" },{ text: "B. 带他出去走走，用自然治愈", color: "苔绿" },{ text: "C. 讲笑话逗他开心，转移注意力", color: "暖橙" },{ text: "D. 帮他分析问题，找到解决办法", color: "雾灰" }] },
+            { question: "7. 对于“个人空间”，你的需求是？", options: [{ text: "A. 需要很多独处时间来恢复能量", color: "蔚蓝" },{ text: "B. 需要适度的安静，但也喜欢陪伴", color: "苔绿" },{ text: "C. 不太需要，有人一起才热闹", color: "暖橙" },{ text: "D. 需要物理空间整洁有序即可", color: "雾灰" }] },
+            { question: "8. 你更愿意把时间花在？", options: [{ text: "A. 深度思考或感受艺术", color: "蔚蓝" },{ text: "B. 亲手做点什么，比如园艺、烹饪", color: "苔绿" },{ text: "C. 和朋友聚会，体验新鲜事物", color: "暖橙" },{ text: "D. 学习技能，提升效率", color: "雾灰" }] },
+            { question: "9. 哪种环境让你灵感最多？", options: [{ text: "A. 安静的咖啡馆角落，或深夜的书房", color: "蔚蓝" },{ text: "B. 森林、海边，有植物和微风的地方", color: "苔绿" },{ text: "C. 热闹的街头，观察人来人往", color: "暖橙" },{ text: "D. 整洁的图书馆或工作室", color: "雾灰" }] },
+            { question: "10. 当你和别人意见不同时，你通常？", options: [{ text: "A. 沉默或委婉表达，不想冲突", color: "蔚蓝" },{ text: "B. 冷静沟通，寻找双方都能接受的方案", color: "苔绿" },{ text: "C. 热情说服，相信沟通能解决一切", color: "暖橙" },{ text: "D. 摆出事实和逻辑，坚持对的", color: "雾灰" }] },
+            { question: "11. 你理想中的早晨是怎样的？", options: [{ text: "A. 窗外有鸟鸣，慢慢喝一杯茶", color: "蔚蓝" },{ text: "B. 去公园跑个步，呼吸清新空气", color: "苔绿" },{ text: "C. 阳光洒进房间，放一首活力音乐", color: "暖橙" },{ text: "D. 有条不紊地按清单开启一天", color: "雾灰" }] },
+            { question: "12. 哪种颜色更接近你的内在气质？", options: [{ text: "A. 深海般的蓝，安静深邃", color: "蔚蓝" },{ text: "B. 雨后青苔的绿，平和有生机", color: "苔绿" },{ text: "C. 日落时分的橙，温暖洋溢", color: "暖橙" },{ text: "D. 晨雾中的灰，理性而包容", color: "雾灰" }] },
+            { question: "13. 在团队中，你往往扮演什么角色？", options: [{ text: "A. 安静的观察者，给出深思后的建议", color: "蔚蓝" },{ text: "B. 稳定的支持者，实际推进任务", color: "苔绿" },{ text: "C. 气氛调节者，鼓励大家", color: "暖橙" },{ text: "D. 组织者或决策者，把控方向", color: "雾灰" }] },
+            { question: "14. 回忆过去时，你更容易记住？", options: [{ text: "A. 当时的情绪和氛围", color: "蔚蓝" },{ text: "B. 场景里的气味、温度和触感", color: "苔绿" },{ text: "C. 大家一起大笑的瞬间", color: "暖橙" },{ text: "D. 事情的前因后果和关键节点", color: "雾灰" }] },
+            { question: "15. 你更渴望获得哪种评价？", options: [{ text: "A. “你真的很懂我”", color: "蔚蓝" },{ text: "B. “有你在很安心”", color: "苔绿" },{ text: "C. “和你在一起好快乐”", color: "暖橙" },{ text: "D. “你做事我放心”", color: "雾灰" }] },
+            { question: "16. 哪种自我成长的方式更适合你？", options: [{ text: "A. 心理咨询或写日记，向内探索", color: "蔚蓝" },{ text: "B. 瑜伽、冥想，身体与心灵同步", color: "苔绿" },{ text: "C. 旅行和社交，向外拓展", color: "暖橙" },{ text: "D. 读书上课，系统提升认知", color: "雾灰" }] },
+            { question: "17. 你对于“未来”的态度更接近？", options: [{ text: "A. 带着一点诗意的期待，也有一点忧虑", color: "蔚蓝" },{ text: "B. 相信自然会变好，顺势而为", color: "苔绿" },{ text: "C. 充满希望，觉得有很多惊喜等着", color: "暖橙" },{ text: "D. 目标明确，正一步步走过去", color: "雾灰" }] },
+            { question: "18. 当你被人误解时，你会？", options: [{ text: "A. 心里难过，但不太想解释", color: "蔚蓝" },{ text: "B. 选择合适的时机，平和说明", color: "苔绿" },{ text: "C. 立刻解释，不想有隔阂", color: "暖橙" },{ text: "D. 列出事实，澄清误解", color: "雾灰" }] },
+            { question: "19. 哪种礼物最能打动你？", options: [{ text: "A. 一封手写信，或一本懂你的书", color: "蔚蓝" },{ text: "B. 一盆植物，或亲手做的东西", color: "苔绿" },{ text: "C. 一场安排好的惊喜旅行", color: "暖橙" },{ text: "D. 你正好需要的实用物品", color: "雾灰" }] },
+            { question: "20. 用一句话形容你的人生底色？", options: [{ text: "A. “深海静默，却藏有万千情绪”", color: "蔚蓝" },{ text: "B. “像一棵树，安静生长，不争不抢”", color: "苔绿" },{ text: "C. “永远温暖，永远向阳”", color: "暖橙" },{ text: "D. “山间雾霭，冷静而知性”", color: "雾灰" }] }
         ];
 
-        // ==================== 灵魂底色结果 ====================
         const colorData = {
-            "雾蓝": { 
-                hex: "#b0c4de", 
-                name: "雾蓝色",
-                desc: "你的灵魂是雾蓝色的——像薄雾弥漫的湖面，安静却深不见底。你不习惯喧哗，却拥有丰盈的内心世界。独处是你充电的方式，你总能敏锐地感知到他人忽略的细节。你的温柔带着距离感，但一旦靠近，会发现那里藏着一整片星空。"
-            },
-            "苔绿": { 
-                hex: "#9ab8a4", 
-                name: "苔绿色",
-                desc: "你的灵魂是苔绿色的——像森林深处湿润的青苔，温厚而坚韧。你天生自带治愈力，像大地一样接纳所有人。你不争不抢，却在自己的节奏里活得生机勃勃。靠近你的人，总能闻到雨后草木的清香，感到久违的平静。"
-            },
-            "晨光黄": { 
-                hex: "#f5d998", 
-                name: "晨光黄",
-                desc: "你的灵魂是晨光黄的——像破晓时分的第一缕阳光，温暖而不刺眼。你乐观、明亮，总能把平淡的日子过得热气腾腾。你像向日葵一样自带趋光性，也无意间成了很多人的小太阳。请记得，温暖别人之前，你本身就已经足够发光。"
-            },
-            "烟紫": { 
-                hex: "#c4b5c6", 
-                name: "烟紫色",
-                desc: "你的灵魂是烟紫色的——像暮色里一缕若有若无的薄烟，梦幻而细腻。你有极强的共情能力，常沉浸在自己诗意的世界里。你喜欢一切柔软的事物，也容易被微小而深刻的东西打动。你的温柔，是一种安静的力量。"
-            },
-            "星灰": { 
-                hex: "#bcb5b0", 
-                name: "星灰色",
-                desc: "你的灵魂是星灰色的——像黎明前天空的底色，克制、高级，充满可能性。你不喜欢张扬，但有自己的棱角和坚持。你对复杂的事物有天然的过滤力，总能直抵本质。看似冷淡，其实比谁都懂得珍惜那些真正重要的东西。"
-            },
-            "珊瑚橘": { 
-                hex: "#e8a87c", 
-                name: "珊瑚橘",
-                desc: "你的灵魂是珊瑚橘的——像海底摇曳的珊瑚，热烈、真挚、充满生命力。你爱憎分明，表达直接，从不掩饰内心的温度。你的存在就像一团小小的火焰，照亮身边的人，也温暖了自己。你相信爱就是最大的意义。"
-            },
-            "琥珀棕": { 
-                hex: "#c4a882", 
-                name: "琥珀棕",
-                desc: "你的灵魂是琥珀棕的——像凝固了时光的琥珀，温润而有故事感。你喜欢一切有沉淀感的事物：旧书、老物件、悠长的午后。你待人接物不疾不徐，有一种让人安心的力量。时间在你这里走得很慢，但每一步都算数。"
-            },
-            "月白": { 
-                hex: "#e9e4d4", 
-                name: "月白色",
-                desc: "你的灵魂是月白色的——像月光洒在宣纸上，清透、干净、有条理。你喜欢清晰和秩序，对美有自己一套严格的准则。你不属于喧嚣的场合，却在独行中自成一格。你的灵魂像一轮安静的上弦月，清醒而皎洁。"
-            }
+            "蔚蓝": { color: "#5b7f9e", name: "蔚蓝", desc: "你的人格底色是深邃而温柔的蔚蓝，像黄昏时分的海面，表面平静，深处却涌动着丰富的情感。你是很好的倾听者，拥有一颗共情力极强的内心。你习惯先处理别人的情绪，再处理事情。你不喜欢肤浅的喧闹，渴望灵魂层面的共鸣。有时候你显得有点疏离，但其实是你太珍惜那份内在的秩序。独处对你来说不是孤独，而是一种必要的修复。你像一本需要慢慢品读的书，初看安静，越读越有味道。你的力量在于深度，在一个人人都急于表达的世界里，你依然愿意留出空间去感受、去理解、去等待。请保护好你的敏感，那不是脆弱，而是你独有的天赋。" },
+            "苔绿": { color: "#7d9b6e", name: "苔绿", desc: "你的人格底色是沉稳而有生命力的苔绿，像雨后森林里湿润的泥土和覆盖在石头上的青苔。你不争不抢，却始终以自己的节奏生长。你身上有一种让人安心的力量，仿佛在你身边一切都会慢下来，变得稳妥。你喜欢用行动表达关心，做一桌菜、修好一个东西、默默陪伴。你不擅长华丽言辞，但你的存在本身就是一种治愈。你享受自然的疗愈，喜欢植物的安静和动物的单纯。你不太喜欢剧烈的变化，但适应能力很强，总能在变动中找到新的平衡。你像一棵老树，根扎得很深，风雨来了摇一摇，但从不倒下。你的底色提醒你：温柔不代表软弱，安静不代表没有力量。" },
+            "暖橙": { color: "#e09f6d", name: "暖橙", desc: "你的人格底色是明亮温暖的暖橙，像日落前最后一抹余晖，温柔地包裹着每一个人。你天生有一种让人放松、愿意靠近的魔力。你的笑声很有感染力，总能轻易让周围变得明亮。你相信沟通能化解一切，拥抱比道理更有用。你热爱生活，喜欢吃好吃的、玩好玩的，觉得人间值得。你有时候会被误解为不够深刻，但其实你只是选择了用乐观去对抗生活的难。你像一团小小的火焰，温暖但不灼人。你的底色在提醒你：你的存在本身就是礼物，你不需要总是燃烧自己去照亮别人，偶尔允许自己也有阴天。" },
+            "雾灰": { color: "#a0a8b0", name: "雾灰", desc: "你的人格底色是理性而包容的雾灰，像清晨山间的薄雾，不带任何偏见地笼罩一切。你头脑清晰，善于分析，情绪很少失控。你做决定时依赖事实和逻辑，因此让人觉得可靠。你喜欢一切井然有序，混乱会让你焦虑。你看起来冷静自持，其实内心也有柔软，只是不轻易示人。你像一杯温度刚好的水，不冰不烫，解渴刚好。你追求效率，但并非冷漠；你重视规则，但并非僵化。你的底色赋予你一种独特的成熟感，像城市天际线背后的灰色天空，不抢眼却是所有色彩的背景。请记得，偶尔放下对完美的要求，允许生活有几分朦胧和不确定。你值得被理解，不只是被信赖。" }
         };
 
-        // ==================== 动态生成题目 ====================
         const container = document.getElementById('questionsContainer');
         questions.forEach((q, idx) => {
             const div = document.createElement('div');
             div.className = 'question';
-            const optionsHTML = q.options.map((opt) => `
+            const optionsHTML = q.options.map(opt => `
                 <label>
                     <input type="radio" name="q${idx}" value="${opt.color}" required>
                     ${opt.text}
@@ -279,21 +184,16 @@
             container.appendChild(div);
         });
 
-        // ==================== 提交与计分 ====================
         document.getElementById('testForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const errorMsg = document.getElementById('errorMsg');
-            const allAnswered = questions.every((_, idx) => {
-                return document.querySelector(`input[name="q${idx}"]:checked`);
-            });
-
+            const allAnswered = questions.every((_, idx) => document.querySelector(`input[name="q${idx}"]:checked`));
             if (!allAnswered) {
                 errorMsg.style.display = 'block';
                 return;
             }
             errorMsg.style.display = 'none';
 
-            // 统计每个颜色的得分
             const scores = {};
             questions.forEach((q, idx) => {
                 const selected = document.querySelector(`input[name="q${idx}"]:checked`);
@@ -303,27 +203,22 @@
                 }
             });
 
-            // 找出得分最高的颜色
             let maxScore = 0;
-            let resultColorKey = "雾蓝";
-            for (let color in scores) {
-                if (scores[color] > maxScore) {
-                    maxScore = scores[color];
-                    resultColorKey = color;
-                }
+            let resultColor = "蔚蓝";
+            for (let c in scores) {
+                if (scores[c] > maxScore) { maxScore = scores[c]; resultColor = c; }
             }
 
-            const topColors = Object.entries(scores).filter(([_, s]) => s === maxScore).map(([c]) => c);
-            if (topColors.length > 1) {
-                resultColorKey = topColors[0];
-            }
+            const top = Object.entries(scores).filter(([,s]) => s===maxScore).map(([c])=>c);
+            if (top.length > 1) resultColor = top[0];
 
-            const data = colorData[resultColorKey];
+            const data = colorData[resultColor];
             const resultDiv = document.getElementById('result');
             resultDiv.innerHTML = `
-                <div class="result-color-box" style="background-color: ${data.hex};"></div>
-                <div class="result-name">${data.name}</div>
-                <div class="result-desc">${data.desc}</div>
+                <div class="result-color" style="background: ${data.color};"></div>
+                <div class="result-name" style="color: ${data.color};">${data.name}</div>
+                <div class="divider" style="background: ${data.color};"></div>
+                <div class="result-desc" style="color: #4a3a5e;">${data.desc}</div>
             `;
             resultDiv.style.display = 'block';
             resultDiv.scrollIntoView({ behavior: 'smooth' });
