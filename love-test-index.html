@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测一测你适合和什么样的人谈恋爱</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(160deg, #fdf2f4 0%, #f9e4e8 25%, #fef5f7 50%, #fce8ec 75%, #fdf2f4 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        .container {
+            max-width: 640px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border-radius: 36px;
+            padding: 36px 28px 44px;
+            box-shadow: 0 25px 60px rgba(160, 60, 80, 0.1), 0 4px 16px rgba(0,0,0,0.03);
+            margin: 20px 0;
+            border: 1px solid rgba(255,255,255,0.6);
+        }
+        h1 {
+            text-align: center;
+            color: #4a2c38;
+            font-size: 30px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            letter-spacing: 1px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #8b5a6a;
+            margin-bottom: 28px;
+            font-size: 14px;
+            font-weight: 400;
+        }
+        /* 进度条 */
+        .progress-section {
+            margin-bottom: 24px;
+            background: rgba(255,255,255,0.5);
+            border-radius: 16px;
+            padding: 14px 16px;
+            backdrop-filter: blur(10px);
+        }
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: #7a4a5a;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+        .progress-bar {
+            height: 8px;
+            background: #f0d6de;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #e0a0b0, #c77d90, #a85a6e);
+            border-radius: 10px;
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 0%;
+            box-shadow: 0 0 10px rgba(200, 120, 140, 0.4);
+        }
+        /* 题目卡片 */
+        .question-card {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 28px;
+            padding: 32px 24px;
+            box-shadow: 0 12px 35px rgba(140, 50, 70, 0.07), 0 2px 8px rgba(0,0,0,0.03);
+            min-height: 260px;
+            animation: fadeSlide 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            border: 1px solid rgba(255,255,255,0.7);
+            position: relative;
+            overflow: hidden;
+        }
+        .question-card::before {
+            content: '';
+            position: absolute;
+            top: -40px;
+            right: -40px;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, rgba(220, 150, 165, 0.12) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        @keyframes fadeSlide {
+            from { opacity: 0; transform: translateX(25px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .q-title {
+            font-weight: 700;
+            color: #3d1f28;
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 28px;
+            position: relative;
+            z-index: 1;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 13px;
+            position: relative;
+            z-index: 1;
+        }
+        label {
+            display: flex;
+            align-items: flex-start;
+            padding: 16px 18px;
+            background: #fdf7f9;
+            border: 2px solid transparent;
+            border-radius: 18px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            font-size: 15px;
+            color: #4a2c38;
+        }
+        label:hover {
+            background: #fef0f3;
+            border-color: #e0b8c2;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 14px rgba(160, 80, 100, 0.06);
+        }
+        input[type="radio"] {
+            appearance: none;
+            -webkit-appearance: none;
+            min-width: 22px;
+            width: 22px;
+            height: 22px;
+            border: 2px solid #d0a0ae;
+            border-radius: 50%;
+            margin-right: 14px;
+            margin-top: 1px;
+            cursor: pointer;
+            transition: all 0.25s;
+        }
+        input[type="radio"]:checked {
+            background: #c77d90;
+            border-color: #a85a6e;
+            box-shadow: inset 0 0 0 5px white, 0 0 0 4px rgba(199, 125, 144, 0.2);
+        }
+        /* 导航按钮 */
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 28px;
+            gap: 14px;
+        }
+        .nav-btn {
+            padding: 15px 32px;
+            font-size: 16px;
+            font-weight: 600;
+            border: 2px solid #d0a0ae;
+            background: rgba(255,255,255,0.7);
+            backdrop-filter: blur(10px);
+            color: #4a2c38;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.25s;
+            letter-spacing: 0.5px;
+        }
+        .nav-btn:hover:not(:disabled) {
+            background: rgba(255,255,255,0.95);
+            border-color: #c77d90;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(140, 60, 80, 0.1);
+        }
+        .nav-btn:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+        }
+        .nav-btn.primary {
+            background: #b86272;
+            color: white;
+            border-color: #b86272;
+            box-shadow: 0 8px 22px rgba(160, 70, 90, 0.25);
+        }
+        .nav-btn.primary:hover:not(:disabled) {
+            background: #c77d90;
+            border-color: #c77d90;
+            box-shadow: 0 12px 28px rgba(160, 70, 90, 0.35);
+        }
+        /* 结果区 */
+        #result {
+            display: none;
+            padding: 36px 28px;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 32px;
+            margin-top: 28px;
+            text-align: center;
+            box-shadow: 0 20px 45px rgba(120, 40, 60, 0.1);
+            animation: fadeInUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+            border: 1px solid rgba(255,255,255,0.7);
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .result-icon {
+            font-size: 72px;
+            margin-bottom: 10px;
+        }
+        .result-type {
+            font-size: 36px;
+            font-weight: 700;
+            color: #b86272;
+            margin: 14px 0 8px;
+            letter-spacing: 2px;
+        }
+        .result-subtitle {
+            font-size: 15px;
+            color: #8b5a6a;
+            margin-bottom: 20px;
+        }
+        .divider {
+            width: 60px;
+            height: 3px;
+            background: #d0a0ae;
+            margin: 0 auto 26px;
+            border-radius: 2px;
+            opacity: 0.7;
+        }
+        .result-desc {
+            font-size: 16px;
+            line-height: 2;
+            text-align: left;
+            color: #3d1f28;
+            margin: 0;
+            padding: 0 4px;
+        }
+        .result-detail {
+            margin-top: 24px;
+            background: #fdf2f4;
+            border-radius: 16px;
+            padding: 20px;
+            text-align: left;
+            font-size: 14px;
+            line-height: 1.8;
+            color: #5a3a44;
+        }
+        .result-detail span {
+            font-weight: 700;
+            color: #b86272;
+        }
+        .error-message {
+            color: #c44;
+            text-align: center;
+            margin-top: 14px;
+            display: none;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        .test-area.hidden { display: none; }
+        @media (max-width: 500px) {
+            .container { padding: 24px 18px; border-radius: 28px; }
+            h1 { font-size: 24px; }
+            .question-card { padding: 24px 18px; }
+            .nav-btn { padding: 13px 22px; font-size: 15px; }
+            .result-type { font-size: 28px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>💕 测一测你适合和什么样的人谈恋爱</h1>
+        <p class="subtitle">20道题 · 基于依恋理论与关系心理学 · 找到真正契合的灵魂</p>
+
+        <div id="testArea" class="test-area">
+            <div class="progress-section">
+                <div class="progress-info">
+                    <span id="progressLabel">第 1 / 20 题</span>
+                    <span id="progressPercent">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div id="progressFill" class="progress-fill" style="width: 0%;"></div>
+                </div>
+            </div>
+            <div id="questionCard" class="question-card">
+                <div class="q-title" id="questionTitle"></div>
+                <div class="options" id="optionsContainer"></div>
+            </div>
+            <div class="nav-buttons">
+                <button id="prevBtn" class="nav-btn" disabled>← 上一题</button>
+                <button id="nextBtn" class="nav-btn primary">下一题 →</button>
+            </div>
+            <p class="error-message" id="errorMsg">请选择一个选项再继续哦～</p>
+        </div>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // 20道题，每题4个选项，每个选项直接对应一个结果类型
+        const questions = [
+            { question: "1. 你更喜欢用哪种方式表达爱意？",
+              options: [
+                { text: "A. 默默记住对方的喜好，不经意间做到", type: "灵魂共鸣型" },
+                { text: "B. 经常说“我爱你”，不吝啬赞美和拥抱", type: "阳光治愈型" },
+                { text: "C. 用行动证明，为对方解决问题", type: "势均力敌型" },
+                { text: "D. 在对方需要时第一时间出现", type: "温柔守护型" }
+            ]},
+            { question: "2. 周末你理想中的二人世界是？",
+              options: [
+                { text: "A. 窝在一起看书、看电影，偶尔对视一笑", type: "灵魂共鸣型" },
+                { text: "B. 去逛市集、打卡新店，有说有笑一整天", type: "阳光治愈型" },
+                { text: "C. 一起完成某个目标，比如爬山登顶", type: "势均力敌型" },
+                { text: "D. 在家做一顿饭，慢慢地吃饭聊天", type: "细水长流型" }
+            ]},
+            { question: "3. 对方情绪低落时，你的第一反应是？",
+              options: [
+                { text: "A. 安静地陪在身边，不追问，等他愿意说", type: "灵魂共鸣型" },
+                { text: "B. 想方设法逗他开心，转移注意力", type: "阳光治愈型" },
+                { text: "C. 帮他分析问题，找到解决办法", type: "势均力敌型" },
+                { text: "D. 默默地做好所有琐事，让他不用担心别的", type: "温柔守护型" }
+            ]},
+            { question: "4. 对于恋爱中的“个人空间”，你怎么看？",
+              options: [
+                { text: "A. 彼此尊重对方的独处时间，不必时刻黏在一起", type: "灵魂共鸣型" },
+                { text: "B. 喜欢一起做很多事情，但也接受对方偶尔需要自己待着", type: "阳光治愈型" },
+                { text: "C. 一起进步的空间更重要，比如各自学习然后分享", type: "势均力敌型" },
+                { text: "D. 情感上随时在线，物理距离无所谓", type: "温柔守护型" }
+            ]},
+            { question: "5. 你更希望另一半在事业上？",
+              options: [
+                { text: "A. 做自己喜欢的事就好，收入不是最重要", type: "灵魂共鸣型" },
+                { text: "B. 有热情有干劲，能感染我一起积极向上", type: "阳光治愈型" },
+                { text: "C. 和自己旗鼓相当，互相激励共同成长", type: "势均力敌型" },
+                { text: "D. 稳定可靠，能给家庭安全感就行", type: "细水长流型" }
+            ]},
+            { question: "6. 吵架之后，你希望对方怎么做？",
+              options: [
+                { text: "A. 先冷静一会，然后坐下来好好聊", type: "灵魂共鸣型" },
+                { text: "B. 主动来哄我，不用讲道理，先抱一个", type: "阳光治愈型" },
+                { text: "C. 把问题说清楚，下次避免同样矛盾", type: "势均力敌型" },
+                { text: "D. 用行动表示歉意，比如做一顿我爱吃的", type: "温柔守护型" }
+            ]},
+            { question: "7. 你理想中的约会场景是？",
+              options: [
+                { text: "A. 深夜的长谈，把心里话慢慢倒出来", type: "灵魂共鸣型" },
+                { text: "B. 一场说走就走的短途旅行，充满新鲜感", type: "冒险搭档型" },
+                { text: "C. 一起参加某个工作坊或课程，学点新东西", type: "势均力敌型" },
+                { text: "D. 手牵手在熟悉的街道散步，平淡却踏实", type: "细水长流型" }
+            ]},
+            { question: "8. 你觉得爱情里最迷人的是？",
+              options: [
+                { text: "A. 一个眼神就懂彼此的默契", type: "灵魂共鸣型" },
+                { text: "B. 一起哈哈大笑，每天都过得轻松快乐", type: "阳光治愈型" },
+                { text: "C. 一起翻过困难那座山后的相视一笑", type: "势均力敌型" },
+                { text: "D. 无论发生什么都知道有个人在等你回家", type: "温柔守护型" }
+            ]},
+            { question: "9. 如果和另一半对未来规划有分歧，你会？",
+              options: [
+                { text: "A. 深入了解对方为什么这样想，寻找根因", type: "灵魂共鸣型" },
+                { text: "B. 用乐观态度感染对方，相信总能找到方案", type: "阳光治愈型" },
+                { text: "C. 列出各自的理由，理性讨论优劣", type: "势均力敌型" },
+                { text: "D. 适当让步，只要大方向一致就好", type: "细水长流型" }
+            ]},
+            { question: "10. 你最不能忍受伴侣的哪种特质？",
+              options: [
+                { text: "A. 肤浅，不愿意深入交流", type: "灵魂共鸣型" },
+                { text: "B. 冷漠悲观，总是打击我的热情", type: "阳光治愈型" },
+                { text: "C. 不上进，得过且过", type: "势均力敌型" },
+                { text: "D. 情绪不稳定，忽冷忽热", type: "温柔守护型" }
+            ]},
+            { question: "11. 你更倾向于哪种关系节奏？",
+              options: [
+                { text: "A. 慢慢来，先精神靠近再身体靠近", type: "灵魂共鸣型" },
+                { text: "B. 顺其自然，感觉对了就大胆靠近", type: "阳光治愈型" },
+                { text: "C. 目标清晰，知道彼此要什么再进入关系", type: "势均力敌型" },
+                { text: "D. 日久生情，在相处中不知不觉离不开对方", type: "细水长流型" }
+            ]},
+            { question: "12. 在亲密关系中，你更看重？",
+              options: [
+                { text: "A. 被真正地理解，而不是被评判", type: "灵魂共鸣型" },
+                { text: "B. 被热情地爱着，每天都有小惊喜", type: "阳光治愈型" },
+                { text: "C. 彼此成就，成为更好的自己", type: "势均力敌型" },
+                { text: "D. 被稳稳地接住，永远有一个安全基地", type: "温柔守护型" }
+            ]},
+            { question: "13. 你更喜欢哪种类型的约会？",
+              options: [
+                { text: "A. 安静的美术馆或书店，可以边逛边聊", type: "灵魂共鸣型" },
+                { text: "B. 游乐园、音乐节，玩得尽兴", type: "阳光治愈型" },
+                { text: "C. 一起完成某个挑战，比如密室逃脱", type: "势均力敌型" },
+                { text: "D. 在家做饭看电影，享受二人时光", type: "细水长流型" }
+            ]},
+            { question: "14. 你觉得自己在恋爱中最大的优点是？",
+              options: [
+                { text: "A. 善于洞察对方的情绪，及时给予回应", type: "灵魂共鸣型" },
+                { text: "B. 能给关系带来快乐和正能量", type: "阳光治愈型" },
+                { text: "C. 自律且负责，不会让关系失控", type: "势均力敌型" },
+                { text: "D. 专一且长情，经得起时间考验", type: "温柔守护型" }
+            ]},
+            { question: "15. 如果另一半突然要去另一个城市工作，你会？",
+              options: [
+                { text: "A. 和他深入聊聊这个决定，确认彼此的想法", type: "灵魂共鸣型" },
+                { text: "B. 觉得这是新的可能，可以一起探索新生活", type: "冒险搭档型" },
+                { text: "C. 评估异地对关系的影响，制定维系方案", type: "势均力敌型" },
+                { text: "D. 支持他的决定，做他坚强的后盾", type: "温柔守护型" }
+            ]},
+            { question: "16. 关于浪漫，你最认同哪种描述？",
+              options: [
+                { text: "A. 浪漫是深夜为我留的一盏灯和一句“你回来啦”", type: "细水长流型" },
+                { text: "B. 浪漫是突然出现在我公司楼下带我去看日落", type: "阳光治愈型" },
+                { text: "C. 浪漫是帮我梳理好乱糟糟的工作让我不再焦虑", type: "势均力敌型" },
+                { text: "D. 浪漫是在我崩溃时什么都不说只是抱着我", type: "温柔守护型" }
+            ]},
+            { question: "17. 你更希望自己和另一半的关系像？",
+              options: [
+                { text: "A. 灵魂上的知己，先是最好的朋友再是恋人", type: "灵魂共鸣型" },
+                { text: "B. 快乐的双人组合，生活里永远不缺笑声", type: "阳光治愈型" },
+                { text: "C. 并肩作战的战友，一起面对世界", type: "势均力敌型" },
+                { text: "D. 温暖港湾里的家人，平淡却离不开彼此", type: "细水长流型" }
+            ]},
+            { question: "18. 当你遇到困难，你希望对方？",
+              options: [
+                { text: "A. 先认真听我说完，用提问帮我理清思路", type: "灵魂共鸣型" },
+                { text: "B. 拉我出去透透气，别闷坏了", type: "阳光治愈型" },
+                { text: "C. 和我一起分析解决方案，列出步骤", type: "势均力敌型" },
+                { text: "D. 替我分担一些压力，让我不要硬撑", type: "温柔守护型" }
+            ]},
+            { question: "19. 你理想中的长期关系状态是？",
+              options: [
+                { text: "A. 一直在相互发现，在一起越久越觉得对方丰富", type: "灵魂共鸣型" },
+                { text: "B. 热烈期过去后依然每天有新鲜感", type: "冒险搭档型" },
+                { text: "C. 始终有共同目标，一起打怪升级", type: "势均力敌型" },
+                { text: "D. 越过越有默契，话变少了但默契更深了", type: "细水长流型" }
+            ]},
+            { question: "20. 如果给适合你的爱情配一句话，会是？",
+              options: [
+                { text: "A. “我懂你，胜过千言万语”", type: "灵魂共鸣型" },
+                { text: "B. “你一笑，我的世界就亮了”", type: "阳光治愈型" },
+                { text: "C. “我们一起，什么都可以面对”", type: "势均力敌型" },
+                { text: "D. “慢慢来，我们有一辈子”", type: "细水长流型" }
+            ]}
+        ];
+
+        const resultData = {
+            "灵魂共鸣型": {
+                icon: "🌊",
+                subtitle: "你需要一个能读懂你沉默的人",
+                desc: "你骨子里渴望被真正地理解。你并不需要对方时刻围着你转，也不追求轰轰烈烈的浪漫桥段，你要的是一个能透过你的表面看到你内心波澜的人。你常常话不多，但情绪丰富；你看起来好相处，但其实对走进内心的人要求很高。你受不了肤浅的闲聊和敷衍的回应，宁愿一个人待着也不愿意把时间花在无意义的社交上。在恋爱中，你最大的魅力是那种深不见底的温柔——你可以安静地听对方讲很久，给出恰到好处的回应，让对方觉得终于遇到了一个懂自己的人。适合你的伴侣，不一定是话最多的那一个，但一定是最会听的那一个。他会注意到你微微皱眉的瞬间，会在你说“没事”的时候留下来追问，会用一种近乎直觉的方式理解你的沉默。你们的关系可能不会天天发朋友圈秀恩爱，但会在深夜的长谈里一次次确认：就是你了。",
+                detail: "<span>契合密码：</span>你极度看重情感共鸣和深度交流。你适合一个共情力强、愿意倾听的人。他不需要多耀眼，但要足够细腻。你们的关系像一杯温水，不烫嘴但解渴，经得起时间的沉淀。"
+            },
+            "阳光治愈型": {
+                icon: "☀️",
+                subtitle: "你需要一个用温暖照亮你的人",
+                desc: "你内心深处渴望阳光，渴望有人能把你从偶尔的低落里拉出来。你不是不坚强，只是太习惯自己扛；你不是不开心，只是偶尔也会累。你需要一个像小太阳一样的人——他的笑声有感染力，他的乐观不是天真而是选择。他可以把你从床上拽起来去看日出，可以在雨天拉你出去踩水坑，可以让平凡的日子变得像电影画面。你喜欢被热情地爱着，不觉得腻，反而觉得安心。你讨厌冷漠和悲观，受不了那种整天散发负能量的人，因为你自己已经在努力保持向上了。适合你的伴侣，是那种天生自带正能量的人。他的出现会让你的世界变亮，你们在一起会有说不完的笑话、计划不完的旅行和尝不完的美食。你值得被一个不扫兴的人好好爱着，他会让你觉得：活着真是一件快乐的事。",
+                detail: "<span>契合密码：</span>你容易被积极的情绪感染，讨厌被泼冷水。你需要一个情绪稳定、生性乐观的人。他的阳光不是逼你开心，而是让你觉得开心是一件自然而然的事。你们的关系像周末的早午餐，丰富、热闹、让人期待。"
+            },
+            "势均力敌型": {
+                icon: "⚔️",
+                subtitle: "你需要一个与你并肩作战的人",
+                desc: "你对爱情的理解是：两个人在一起，要能互相成就。你不接受一个人原地踏步、另一个人拼命向前的失衡关系。你希望对方和你一样有上进心、有目标感、有解决问题的能力。你欣赏强者，但不慕强——你要的是一个能和你过招的人，在智识、格局、行动力上都能和你匹配。你不太会恋爱脑，遇到问题第一反应是解决问题。你可能看起来有点理性甚至强势，但其实你只是太清楚自己要什么。适合你的伴侣是一个能接住你的思考节奏、愿意和你一起规划未来的人。你们的关系像一面镜子，能照出彼此的潜力和盲区，你们会在共同成长中越来越离不开对方，因为你们不仅是恋人，更是最佳拍档。",
+                detail: "<span>契合密码：</span>你重视成长性，厌恶停滞。你需要一个思想独立、能力在线的人。他不一定要比你强，但一定要有自己的跑道。你们的关系像合伙创业，有共同愿景、有分工、有互相欣赏。"
+            },
+            "温柔守护型": {
+                icon: "🛡️",
+                subtitle: "你需要一个默默为你兜底的人",
+                desc: "你经历过一些事情，所以比谁都清楚：爱不是说出来的，是做出来的。你不需要花哨的表白和昂贵的礼物，你要的是一个在你最疲惫的时候，能让你安心的人。你可能在外面很坚强，什么事都能自己搞定，但在那个人面前你可以卸下所有伪装。你需要他不用你说就替你挡掉一些麻烦，在你崩溃时不用问缘由只是紧紧抱住你。你受不了忽冷忽热和若即若离，你要的是稳稳的安全感。适合你的伴侣，话可能不多但行动永远在线。他会记得你随口提过的事，会在你加班时送来热饭，会在你说“我没事”的时候不回话而是直接来找你。他用最朴素的方式告诉你：有我在，你不用一个人撑。",
+                detail: "<span>契合密码：</span>你渴望安全感和被坚定选择的感觉。你需要一个情绪成熟、责任心强、说到做到的人。他不轻许诺，但每个承诺都会兑现。你们的关系像一棵大树，根扎得深，风雨来了挡得住。"
+            },
+            "冒险搭档型": {
+                icon: "🧭",
+                subtitle: "你需要一个陪你探索世界的人",
+                desc: "你对爱情的期待里，有一项很重要：要有趣。你讨厌一成不变的日常，怕的不是吵架而是无聊。你喜欢尝试新事物，愿意为了体验支付时间和精力。对你来说，最好的约会不是吃烛光晚餐，而是凌晨驱车去山顶看星星、临时买票去陌生的城市过周末。你需要一个同样有好奇心的人——他不一定比你勇敢，但一定会被你的热情点燃。你们的关系不是安稳的港湾，而是一艘一起出发的帆船。目的地未知，但你知道和他在一起的旅程一定精彩。适合你的伴侣是一个对世界保持开放态度的人，喜欢探索、不怕变化、能和你一起把生活过成冒险。他不会对你说“别闹了”，而是说“走，我陪你”。",
+                detail: "<span>契合密码：</span>你厌恶重复和乏味，需要刺激和新鲜感。你需要一个同样爱玩、爱尝试、不轻易说“好麻烦”的人。你们的关系像公路旅行，重点是沿途的风景和车上放的音乐。"
+            },
+            "细水长流型": {
+                icon: "🏡",
+                subtitle: "你需要一个给你安稳日常的人",
+                desc: "你对爱情的追求，不在山盟海誓，而在日复一日的陪伴里。你最感动的事，可能只是他记得你不吃香菜、或者过马路时永远让你走内侧。你不需要每天都过得轰轰烈烈，你要的是一种稳定而温柔的节奏。你知道浪漫会褪色，但责任感、好脾气和生活习惯的合拍才是长久的基础。你适合一个踏实靠谱的人，他不会说太多漂亮话，但会把工资卡交给你、会在你生病时请假陪你去医院、会在每个平凡的日子让你觉得被爱着。你们可能没有太多惊心动魄的故事，但会有一种像旧毛衣一样的温暖质感。你们的爱情藏在每个普通的早晨和夜晚，细水流长，却最不容易干涸。",
+                detail: "<span>契合密码：</span>你重视稳定和可预期性，需要安全感。你适合一个生活规律、为人稳重、有责任心的人。他不浪漫但可靠，不惊艳但长情。你们的关系像一本翻旧的日记，每页都写着踏实。"
+            }
+        };
+
+        // 翻页逻辑
+        let currentIndex = 0;
+        const totalQuestions = questions.length;
+        const answers = new Array(totalQuestions).fill(null);
+
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const errorMsg = document.getElementById('errorMsg');
+        const testArea = document.getElementById('testArea');
+        const resultDiv = document.getElementById('result');
+        const progressLabel = document.getElementById('progressLabel');
+        const progressPercent = document.getElementById('progressPercent');
+        const progressFill = document.getElementById('progressFill');
+
+        function updateProgress() {
+            const answeredCount = answers.filter(a => a !== null).length;
+            const percent = Math.round((answeredCount / totalQuestions) * 100);
+            progressLabel.textContent = `第 ${currentIndex + 1} / ${totalQuestions} 题`;
+            progressPercent.textContent = `${percent}%`;
+            progressFill.style.width = `${percent}%`;
+        }
+
+        function renderQuestion(index) {
+            const q = questions[index];
+            document.getElementById('questionTitle').textContent = q.question;
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+            q.options.forEach(opt => {
+                const label = document.createElement('label');
+                const radio = document.createElement('input');
+                radio.type = 'radio';
+                radio.name = 'currentOption';
+                radio.value = opt.type;
+                if (answers[index] === opt.type) radio.checked = true;
+                radio.addEventListener('change', function() {
+                    answers[index] = opt.type;
+                    errorMsg.style.display = 'none';
+                    updateProgress();
+                });
+                label.appendChild(radio);
+                label.appendChild(document.createTextNode(opt.text));
+                optionsContainer.appendChild(label);
+            });
+            prevBtn.disabled = (index === 0);
+            if (index === totalQuestions - 1) {
+                nextBtn.textContent = '💕 提交，看看你适合谁';
+                nextBtn.className = 'nav-btn primary';
+            } else {
+                nextBtn.textContent = '下一题 →';
+                nextBtn.className = 'nav-btn primary';
+            }
+            updateProgress();
+            errorMsg.style.display = 'none';
+        }
+
+        function goToNext() {
+            if (answers[currentIndex] === null) {
+                errorMsg.style.display = 'block';
+                return;
+            }
+            if (currentIndex === totalQuestions - 1) {
+                submitTest();
+                return;
+            }
+            currentIndex++;
+            renderQuestion(currentIndex);
+        }
+
+        function goToPrev() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                renderQuestion(currentIndex);
+            }
+        }
+
+        function submitTest() {
+            if (answers.includes(null)) {
+                errorMsg.style.display = 'block';
+                return;
+            }
+            const scores = {};
+            answers.forEach(type => {
+                scores[type] = (scores[type] || 0) + 1;
+            });
+            let maxScore = 0;
+            let resultType = "灵魂共鸣型";
+            for (let t in scores) {
+                if (scores[t] > maxScore) {
+                    maxScore = scores[t];
+                    resultType = t;
+                }
+            }
+            const data = resultData[resultType];
+            testArea.classList.add('hidden');
+            resultDiv.innerHTML = `
+                <div class="result-icon">${data.icon}</div>
+                <div class="result-type">${resultType}</div>
+                <div class="result-subtitle">${data.subtitle}</div>
+                <div class="divider"></div>
+                <div class="result-desc">${data.desc}</div>
+                <div class="result-detail">${data.detail}</div>
+            `;
+            resultDiv.style.display = 'block';
+            resultDiv.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        nextBtn.addEventListener('click', goToNext);
+        prevBtn.addEventListener('click', goToPrev);
+
+        document.addEventListener('keydown', function(e) {
+            if (testArea.classList.contains('hidden')) return;
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+                e.preventDefault();
+                goToNext();
+            } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                e.preventDefault();
+                goToPrev();
+            }
+        });
+
+        renderQuestion(0);
+    </script>
+</body>
+</html>
