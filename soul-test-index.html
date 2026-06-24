@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测测你的人格底色</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(145deg, #f0e6f6 0%, #e8dcf0 30%, #f9f0f5 70%, #fce4ec 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        .container {
+            max-width: 640px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.55);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border-radius: 36px;
+            padding: 36px 28px 44px;
+            box-shadow: 0 25px 60px rgba(100, 60, 120, 0.12), 0 4px 16px rgba(0,0,0,0.04);
+            margin: 20px 0;
+            border: 1px solid rgba(255,255,255,0.6);
+        }
+        h1 {
+            text-align: center;
+            color: #3d2c4a;
+            font-size: 30px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            letter-spacing: 1px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #7a6b8a;
+            margin-bottom: 28px;
+            font-size: 14px;
+            font-weight: 400;
+        }
+        /* 进度条区域 */
+        .progress-section {
+            margin-bottom: 24px;
+            background: rgba(255,255,255,0.5);
+            border-radius: 16px;
+            padding: 14px 16px;
+            backdrop-filter: blur(10px);
+        }
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: #6b5a7a;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+        .progress-bar {
+            height: 8px;
+            background: #e0d6e8;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #b392c4, #9b8aaf, #7a688f);
+            border-radius: 10px;
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 0%;
+            box-shadow: 0 0 10px rgba(155, 138, 175, 0.5);
+        }
+        /* 题目卡片 */
+        .question-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 28px;
+            padding: 32px 24px;
+            box-shadow: 0 12px 35px rgba(80, 40, 100, 0.08), 0 2px 8px rgba(0,0,0,0.03);
+            min-height: 280px;
+            animation: fadeSlide 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            border: 1px solid rgba(255,255,255,0.7);
+            position: relative;
+            overflow: hidden;
+        }
+        .question-card::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle, rgba(155, 138, 175, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        @keyframes fadeSlide {
+            from { opacity: 0; transform: translateX(30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .q-title {
+            font-weight: 700;
+            color: #36284a;
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 28px;
+            position: relative;
+            z-index: 1;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            position: relative;
+            z-index: 1;
+        }
+        label {
+            display: flex;
+            align-items: flex-start;
+            padding: 16px 18px;
+            background: #faf7fc;
+            border: 2px solid transparent;
+            border-radius: 18px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            font-size: 15px;
+            color: #4a3a5e;
+            position: relative;
+        }
+        label:hover {
+            background: #f3edf7;
+            border-color: #c9b8d9;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(120, 90, 150, 0.08);
+        }
+        input[type="radio"] {
+            appearance: none;
+            -webkit-appearance: none;
+            min-width: 22px;
+            width: 22px;
+            height: 22px;
+            border: 2px solid #b8a9c9;
+            border-radius: 50%;
+            margin-right: 14px;
+            margin-top: 1px;
+            cursor: pointer;
+            transition: all 0.25s;
+            position: relative;
+        }
+        input[type="radio"]:checked {
+            background: #9b8aaf;
+            border-color: #7a688f;
+            box-shadow: inset 0 0 0 5px white, 0 0 0 4px rgba(155, 138, 175, 0.2);
+        }
+        /* 导航按钮 */
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 28px;
+            gap: 14px;
+        }
+        .nav-btn {
+            padding: 15px 32px;
+            font-size: 16px;
+            font-weight: 600;
+            border: 2px solid #c9b8d9;
+            background: rgba(255,255,255,0.7);
+            backdrop-filter: blur(10px);
+            color: #4a3a5e;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.25s;
+            letter-spacing: 0.5px;
+        }
+        .nav-btn:hover:not(:disabled) {
+            background: rgba(255,255,255,0.95);
+            border-color: #a08bb5;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(100, 70, 140, 0.1);
+        }
+        .nav-btn:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+        }
+        .nav-btn.primary {
+            background: #4a3a5e;
+            color: white;
+            border-color: #4a3a5e;
+            box-shadow: 0 8px 22px rgba(74, 58, 94, 0.25);
+        }
+        .nav-btn.primary:hover:not(:disabled) {
+            background: #5e4a72;
+            border-color: #5e4a72;
+            box-shadow: 0 12px 28px rgba(74, 58, 94, 0.35);
+        }
+        .nav-btn.primary:active {
+            transform: translateY(0px);
+        }
+        /* 结果区域 */
+        #result {
+            display: none;
+            padding: 36px 28px;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 32px;
+            margin-top: 28px;
+            text-align: center;
+            box-shadow: 0 20px 45px rgba(80, 40, 100, 0.12);
+            animation: fadeInUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+            border: 1px solid rgba(255,255,255,0.7);
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .result-color {
+            display: inline-block;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin-bottom: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.12), inset 0 -4px 8px rgba(0,0,0,0.1);
+        }
+        .result-name {
+            font-size: 38px;
+            font-weight: 700;
+            margin: 14px 0 20px;
+            letter-spacing: 2px;
+        }
+        .result-quote {
+            font-size: 48px;
+            color: #c9b8d9;
+            line-height: 0.5;
+            margin-bottom: 8px;
+        }
+        .divider {
+            width: 70px;
+            height: 3px;
+            margin: 0 auto 26px;
+            border-radius: 2px;
+            opacity: 0.7;
+        }
+        .result-desc {
+            font-size: 16px;
+            line-height: 2;
+            text-align: left;
+            color: #3d2c4a;
+            margin: 0;
+            padding: 0 4px;
+        }
+        .error-message {
+            color: #c44;
+            text-align: center;
+            margin-top: 14px;
+            display: none;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        .test-area.hidden {
+            display: none;
+        }
+        /* 响应式 */
+        @media (max-width: 500px) {
+            .container { padding: 24px 18px; border-radius: 28px; }
+            h1 { font-size: 24px; }
+            .question-card { padding: 24px 18px; }
+            .nav-btn { padding: 13px 22px; font-size: 15px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 测测你的人格底色</h1>
+        <p class="subtitle">20道题 · 照见你性格最深处的颜色</p>
+
+        <!-- 测试区域 -->
+        <div id="testArea" class="test-area">
+            <!-- 进度条 -->
+            <div class="progress-section">
+                <div class="progress-info">
+                    <span id="progressLabel">第 1 / 20 题</span>
+                    <span id="progressPercent">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div id="progressFill" class="progress-fill" style="width: 0%;"></div>
+                </div>
+            </div>
+
+            <!-- 题目卡片 -->
+            <div id="questionCard" class="question-card">
+                <div class="q-title" id="questionTitle"></div>
+                <div class="options" id="optionsContainer"></div>
+            </div>
+
+            <!-- 导航按钮 -->
+            <div class="nav-buttons">
+                <button id="prevBtn" class="nav-btn" disabled>← 上一题</button>
+                <button id="nextBtn" class="nav-btn primary">下一题 →</button>
+            </div>
+            <p class="error-message" id="errorMsg">请选择一个选项再继续哦～</p>
+        </div>
+
+        <!-- 结果区域 -->
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // 题库（20题，每题4选项，每个选项对应一个人格底色）
+        const questions = [
+            { question: "1. 独处时，哪种状态让你最舒服？", options: [{ text: "A. 看书、写日记，整理内心", color: "蔚蓝" },{ text: "B. 沉浸在一个创作或手工里", color: "苔绿" },{ text: "C. 和朋友线上聊天，刷有趣的视频", color: "暖橙" },{ text: "D. 规划未来，列出清晰的目标清单", color: "雾灰" }] },
+            { question: "2. 别人对你的第一印象通常是？", options: [{ text: "A. 安静温柔，有点距离感", color: "蔚蓝" },{ text: "B. 安静但有力量，让人安心", color: "苔绿" },{ text: "C. 热情开朗，很容易聊起来", color: "暖橙" },{ text: "D. 理性冷静，值得信赖", color: "雾灰" }] },
+            { question: "3. 面对突然的改变，你通常？", options: [{ text: "A. 先感受情绪，慢慢消化", color: "蔚蓝" },{ text: "B. 接受它，并从中找到新的节奏", color: "苔绿" },{ text: "C. 有点兴奋，觉得是新的可能", color: "暖橙" },{ text: "D. 快速分析利弊，调整计划", color: "雾灰" }] },
+            { question: "4. 哪种表达爱的方式更像你？", options: [{ text: "A. 写长长的文字，或者默默地陪伴", color: "蔚蓝" },{ text: "B. 用行动照顾对方，做实际的事", color: "苔绿" },{ text: "C. 热情赞美，频繁的拥抱和表达", color: "暖橙" },{ text: "D. 为对方解决问题，规划未来", color: "雾灰" }] },
+            { question: "5. 你更欣赏哪种类型的电影/书籍？", options: [{ text: "A. 细腻的情感片，有心理深度", color: "蔚蓝" },{ text: "B. 自然纪录片，或者关于成长的故事", color: "苔绿" },{ text: "C. 轻松喜剧，让人大笑的综艺", color: "暖橙" },{ text: "D. 悬疑推理，考验逻辑的科幻", color: "雾灰" }] },
+            { question: "6. 朋友情绪低落时，你倾向于？", options: [{ text: "A. 安静地听，给予情感上的共鸣", color: "蔚蓝" },{ text: "B. 带他出去走走，用自然治愈", color: "苔绿" },{ text: "C. 讲笑话逗他开心，转移注意力", color: "暖橙" },{ text: "D. 帮他分析问题，找到解决办法", color: "雾灰" }] },
+            { question: "7. 对于“个人空间”，你的需求是？", options: [{ text: "A. 需要很多独处时间来恢复能量", color: "蔚蓝" },{ text: "B. 需要适度的安静，但也喜欢陪伴", color: "苔绿" },{ text: "C. 不太需要，有人一起才热闹", color: "暖橙" },{ text: "D. 需要物理空间整洁有序即可", color: "雾灰" }] },
+            { question: "8. 你更愿意把时间花在？", options: [{ text: "A. 深度思考或感受艺术", color: "蔚蓝" },{ text: "B. 亲手做点什么，比如园艺、烹饪", color: "苔绿" },{ text: "C. 和朋友聚会，体验新鲜事物", color: "暖橙" },{ text: "D. 学习技能，提升效率", color: "雾灰" }] },
+            { question: "9. 哪种环境让你灵感最多？", options: [{ text: "A. 安静的咖啡馆角落，或深夜的书房", color: "蔚蓝" },{ text: "B. 森林、海边，有植物和微风的地方", color: "苔绿" },{ text: "C. 热闹的街头，观察人来人往", color: "暖橙" },{ text: "D. 整洁的图书馆或工作室", color: "雾灰" }] },
+            { question: "10. 当你和别人意见不同时，你通常？", options: [{ text: "A. 沉默或委婉表达，不想冲突", color: "蔚蓝" },{ text: "B. 冷静沟通，寻找双方都能接受的方案", color: "苔绿" },{ text: "C. 热情说服，相信沟通能解决一切", color: "暖橙" },{ text: "D. 摆出事实和逻辑，坚持对的", color: "雾灰" }] },
+            { question: "11. 你理想中的早晨是怎样的？", options: [{ text: "A. 窗外有鸟鸣，慢慢喝一杯茶", color: "蔚蓝" },{ text: "B. 去公园跑个步，呼吸清新空气", color: "苔绿" },{ text: "C. 阳光洒进房间，放一首活力音乐", color: "暖橙" },{ text: "D. 有条不紊地按清单开启一天", color: "雾灰" }] },
+            { question: "12. 哪种颜色更接近你的内在气质？", options: [{ text: "A. 深海般的蓝，安静深邃", color: "蔚蓝" },{ text: "B. 雨后青苔的绿，平和有生机", color: "苔绿" },{ text: "C. 日落时分的橙，温暖洋溢", color: "暖橙" },{ text: "D. 晨雾中的灰，理性而包容", color: "雾灰" }] },
+            { question: "13. 在团队中，你往往扮演什么角色？", options: [{ text: "A. 安静的观察者，给出深思后的建议", color: "蔚蓝" },{ text: "B. 稳定的支持者，实际推进任务", color: "苔绿" },{ text: "C. 气氛调节者，鼓励大家", color: "暖橙" },{ text: "D. 组织者或决策者，把控方向", color: "雾灰" }] },
+            { question: "14. 回忆过去时，你更容易记住？", options: [{ text: "A. 当时的情绪和氛围", color: "蔚蓝" },{ text: "B. 场景里的气味、温度和触感", color: "苔绿" },{ text: "C. 大家一起大笑的瞬间", color: "暖橙" },{ text: "D. 事情的前因后果和关键节点", color: "雾灰" }] },
+            { question: "15. 你更渴望获得哪种评价？", options: [{ text: "A. “你真的很懂我”", color: "蔚蓝" },{ text: "B. “有你在很安心”", color: "苔绿" },{ text: "C. “和你在一起好快乐”", color: "暖橙" },{ text: "D. “你做事我放心”", color: "雾灰" }] },
+            { question: "16. 哪种自我成长的方式更适合你？", options: [{ text: "A. 心理咨询或写日记，向内探索", color: "蔚蓝" },{ text: "B. 瑜伽、冥想，身体与心灵同步", color: "苔绿" },{ text: "C. 旅行和社交，向外拓展", color: "暖橙" },{ text: "D. 读书上课，系统提升认知", color: "雾灰" }] },
+            { question: "17. 你对于“未来”的态度更接近？", options: [{ text: "A. 带着一点诗意的期待，也有一点忧虑", color: "蔚蓝" },{ text: "B. 相信自然会变好，顺势而为", color: "苔绿" },{ text: "C. 充满希望，觉得有很多惊喜等着", color: "暖橙" },{ text: "D. 目标明确，正一步步走过去", color: "雾灰" }] },
+            { question: "18. 当你被人误解时，你会？", options: [{ text: "A. 心里难过，但不太想解释", color: "蔚蓝" },{ text: "B. 选择合适的时机，平和说明", color: "苔绿" },{ text: "C. 立刻解释，不想有隔阂", color: "暖橙" },{ text: "D. 列出事实，澄清误解", color: "雾灰" }] },
+            { question: "19. 哪种礼物最能打动你？", options: [{ text: "A. 一封手写信，或一本懂你的书", color: "蔚蓝" },{ text: "B. 一盆植物，或亲手做的东西", color: "苔绿" },{ text: "C. 一场安排好的惊喜旅行", color: "暖橙" },{ text: "D. 你正好需要的实用物品", color: "雾灰" }] },
+            { question: "20. 用一句话形容你的人生底色？", options: [{ text: "A. “深海静默，却藏有万千情绪”", color: "蔚蓝" },{ text: "B. “像一棵树，安静生长，不争不抢”", color: "苔绿" },{ text: "C. “永远温暖，永远向阳”", color: "暖橙" },{ text: "D. “山间雾霭，冷静而知性”", color: "雾灰" }] }
+        ];
+
+        // 人格底色结果描述（400-500字）
+        const colorData = {
+            "蔚蓝": {
+                color: "#5b7f9e",
+                name: "蔚蓝",
+                desc: "你的人格底色是深邃而温柔的蔚蓝，像黄昏时分的海面，表面平静，深处却涌动着丰富的情感。你是很好的倾听者，拥有一颗共情力极强的内心。你习惯先处理别人的情绪，再处理事情。你不喜欢肤浅的喧闹，渴望灵魂层面的共鸣。有时候你显得有点疏离，但其实是你太珍惜那份内在的秩序。独处对你来说不是孤独，而是一种必要的修复。你像一本需要慢慢品读的书，初看安静，越读越有味道。你的力量在于深度，在一个人人都急于表达的世界里，你依然愿意留出空间去感受、去理解、去等待。请保护好你的敏感，那不是脆弱，而是你独有的天赋。"
+            },
+            "苔绿": {
+                color: "#7d9b6e",
+                name: "苔绿",
+                desc: "你的人格底色是沉稳而有生命力的苔绿，像雨后森林里湿润的泥土和覆盖在石头上的青苔。你不争不抢，却始终以自己的节奏生长。你身上有一种让人安心的力量，仿佛在你身边一切都会慢下来，变得稳妥。你喜欢用行动表达关心，做一桌菜、修好一个东西、默默陪伴。你不擅长华丽言辞，但你的存在本身就是一种治愈。你享受自然的疗愈，喜欢植物的安静和动物的单纯。你不太喜欢剧烈的变化，但适应能力很强，总能在变动中找到新的平衡。你像一棵老树，根扎得很深，风雨来了摇一摇，但从不倒下。你的底色提醒你：温柔不代表软弱，安静不代表没有力量。"
+            },
+            "暖橙": {
+                color: "#e09f6d",
+                name: "暖橙",
+                desc: "你的人格底色是明亮温暖的暖橙，像日落前最后一抹余晖，温柔地包裹着每一个人。你天生有一种让人放松、愿意靠近的魔力。你的笑声很有感染力，总能轻易让周围变得明亮。你相信沟通能化解一切，拥抱比道理更有用。你热爱生活，喜欢吃好吃的、玩好玩的，觉得人间值得。你有时候会被误解为不够深刻，但其实你只是选择了用乐观去对抗生活的难。你像一团小小的火焰，温暖但不灼人。你的底色在提醒你：你的存在本身就是礼物，你不需要总是燃烧自己去照亮别人，偶尔允许自己也有阴天。"
+            },
+            "雾灰": {
+                color: "#a0a8b0",
+                name: "雾灰",
+                desc: "你的人格底色是理性而包容的雾灰，像清晨山间的薄雾，不带任何偏见地笼罩一切。你头脑清晰，善于分析，情绪很少失控。你做决定时依赖事实和逻辑，因此让人觉得可靠。你喜欢一切井然有序，混乱会让你焦虑。你看起来冷静自持，其实内心也有柔软，只是不轻易示人。你像一杯温度刚好的水，不冰不烫，解渴刚好。你追求效率，但并非冷漠；你重视规则，但并非僵化。你的底色赋予你一种独特的成熟感，像城市天际线背后的灰色天空，不抢眼却是所有色彩的背景。请记得，偶尔放下对完美的要求，允许生活有几分朦胧和不确定。你值得被理解，不只是被信赖。"
+            }
+        };
+
+        // ============ 翻页逻辑 ============
+        let currentIndex = 0;
+        const totalQuestions = questions.length;
+        const answers = new Array(totalQuestions).fill(null);
+
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const errorMsg = document.getElementById('errorMsg');
+        const testArea = document.getElementById('testArea');
+        const resultDiv = document.getElementById('result');
+        const progressLabel = document.getElementById('progressLabel');
+        const progressPercent = document.getElementById('progressPercent');
+        const progressFill = document.getElementById('progressFill');
+
+        function updateProgress() {
+            const answeredCount = answers.filter(a => a !== null).length;
+            const percent = Math.round((answeredCount / totalQuestions) * 100);
+            progressLabel.textContent = `第 ${currentIndex + 1} / ${totalQuestions} 题`;
+            progressPercent.textContent = `${percent}%`;
+            progressFill.style.width = `${percent}%`;
+        }
+
+        function renderQuestion(index) {
+            const q = questions[index];
+            document.getElementById('questionTitle').textContent = q.question;
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+            q.options.forEach(opt => {
+                const label = document.createElement('label');
+                const radio = document.createElement('input');
+                radio.type = 'radio';
+                radio.name = 'currentOption';
+                radio.value = opt.color;
+                // 如果之前选过，恢复选项
+                if (answers[index] === opt.color) {
+                    radio.checked = true;
+                }
+                radio.addEventListener('change', function() {
+                    answers[index] = opt.color;
+                    errorMsg.style.display = 'none';
+                    updateProgress();
+                });
+                label.appendChild(radio);
+                label.appendChild(document.createTextNode(opt.text));
+                optionsContainer.appendChild(label);
+            });
+
+            // 按钮状态
+            prevBtn.disabled = (index === 0);
+            if (index === totalQuestions - 1) {
+                nextBtn.textContent = '✨ 提交，看见我的底色';
+                nextBtn.className = 'nav-btn primary';
+            } else {
+                nextBtn.textContent = '下一题 →';
+                nextBtn.className = 'nav-btn primary';
+            }
+            updateProgress();
+            errorMsg.style.display = 'none';
+        }
+
+        function goToNext() {
+            if (answers[currentIndex] === null) {
+                errorMsg.style.display = 'block';
+                return;
+            }
+            if (currentIndex === totalQuestions - 1) {
+                submitTest();
+                return;
+            }
+            currentIndex++;
+            renderQuestion(currentIndex);
+        }
+
+        function goToPrev() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                renderQuestion(currentIndex);
+            }
+        }
+
+        function submitTest() {
+            if (answers.includes(null)) {
+                errorMsg.style.display = 'block';
+                return;
+            }
+            // 统计得分
+            const scores = {};
+            answers.forEach(color => {
+                scores[color] = (scores[color] || 0) + 1;
+            });
+            let maxScore = 0;
+            let resultColor = "蔚蓝";
+            for (let c in scores) {
+                if (scores[c] > maxScore) {
+                    maxScore = scores[c];
+                    resultColor = c;
+                }
+            }
+            const data = colorData[resultColor];
+            // 隐藏测试区，显示结果
+            testArea.classList.add('hidden');
+            resultDiv.innerHTML = `
+                <div class="result-quote">“</div>
+                <div class="result-color" style="background: ${data.color};"></div>
+                <div class="result-name" style="color: ${data.color};">${data.name}</div>
+                <div class="divider" style="background: ${data.color};"></div>
+                <div class="result-desc">${data.desc}</div>
+                <div class="result-quote" style="transform: rotate(180deg); margin-top: 8px;">“</div>
+            `;
+            resultDiv.style.display = 'block';
+            resultDiv.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // 绑定事件
+        nextBtn.addEventListener('click', goToNext);
+        prevBtn.addEventListener('click', goToPrev);
+
+        // 键盘左右键也可以翻页
+        document.addEventListener('keydown', function(e) {
+            if (testArea.classList.contains('hidden')) return; // 结果页不响应
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+                e.preventDefault();
+                goToNext();
+            } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                e.preventDefault();
+                goToPrev();
+            }
+        });
+
+        // 初始渲染第一题
+        renderQuestion(0);
+    </script>
+</body>
+</html>
