@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测一测你最适合生活在哪个国家</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #f9efe2 0%, #f5e6d3 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            max-width: 680px;
+            width: 100%;
+            background: rgba(255,255,255,0.7);
+            backdrop-filter: blur(20px);
+            border-radius: 32px;
+            padding: 30px 24px 40px;
+            box-shadow: 0 20px 50px rgba(120, 80, 50, 0.15);
+            margin: 20px 0;
+        }
+        h1 {
+            text-align: center;
+            color: #5a3e2b;
+            font-size: 28px;
+            margin-bottom: 6px;
+            letter-spacing: 1px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #8b7355;
+            margin-bottom: 24px;
+            font-size: 14px;
+        }
+        /* 进度条区域 */
+        .progress-section {
+            margin-bottom: 28px;
+        }
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: #8b7355;
+            margin-bottom: 8px;
+        }
+        .progress-bar {
+            height: 8px;
+            background: #e8d5c4;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #c4a88b, #a68b6f);
+            border-radius: 10px;
+            transition: width 0.4s ease;
+            width: 0%;
+        }
+        /* 题目卡片 */
+        .question-card {
+            background: white;
+            border-radius: 24px;
+            padding: 28px 22px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.05);
+            min-height: 260px;
+            animation: fadeSlide 0.35s ease;
+        }
+        @keyframes fadeSlide {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .q-title {
+            font-weight: 700;
+            color: #3e2c1f;
+            font-size: 17px;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        label {
+            display: flex;
+            align-items: flex-start;
+            padding: 15px 16px;
+            background: #faf8f5;
+            border: 2px solid transparent;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 15px;
+            color: #4a3a2f;
+        }
+        label:hover {
+            background: #fff9f2;
+            border-color: #d4b896;
+        }
+        input[type="radio"] {
+            appearance: none;
+            -webkit-appearance: none;
+            min-width: 20px; width: 20px; height: 20px;
+            border: 2px solid #c4a88b;
+            border-radius: 50%;
+            margin-right: 14px; margin-top: 2px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        input[type="radio"]:checked {
+            background: #c4a88b;
+            border-color: #a68b6f;
+            box-shadow: inset 0 0 0 5px white, 0 0 0 3px rgba(196,168,139,0.3);
+        }
+        /* 导航按钮 */
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 28px;
+            gap: 12px;
+        }
+        .nav-btn {
+            padding: 14px 28px;
+            font-size: 16px;
+            font-weight: 600;
+            border: 2px solid #c4a88b;
+            background: white;
+            color: #5a3e2b;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .nav-btn:hover {
+            background: #faf3e9;
+        }
+        .nav-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        .nav-btn.primary {
+            background: #5a3e2b;
+            color: white;
+            border-color: #5a3e2b;
+        }
+        .nav-btn.primary:hover {
+            background: #6b4c3b;
+        }
+        /* 结果区域 */
+        #result {
+            display: none;
+            padding: 32px 24px;
+            background: white;
+            border-radius: 24px;
+            margin-top: 32px;
+            text-align: center;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+            animation: fadeInUp 0.5s ease;
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .result-emoji { font-size: 64px; margin-bottom: 8px; }
+        .result-country { font-size: 34px; font-weight: bold; color: #5a3e2b; margin: 12px 0 18px; }
+        .divider { width: 60px; height: 3px; background: #c4a88b; margin: 0 auto 24px; border-radius: 2px; }
+        .result-desc { font-size: 16px; color: #4a3a2f; line-height: 1.9; text-align: left; margin: 0; }
+        .error-message { color: #c44; text-align: center; margin-top: 12px; display: none; font-weight: 500; }
+        .test-area.hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌍 你最适合生活在哪个国家</h1>
+        <p class="subtitle">20道题 · 从性格到审美 · 找到你的灵魂归属</p>
+
+        <div id="testArea" class="test-area">
+            <!-- 进度条 -->
+            <div class="progress-section">
+                <div class="progress-info">
+                    <span id="progressLabel">第 1 / 20 题</span>
+                    <span id="progressPercent">5%</span>
+                </div>
+                <div class="progress-bar">
+                    <div id="progressFill" class="progress-fill" style="width: 5%;"></div>
+                </div>
+            </div>
+
+            <!-- 题目卡片 -->
+            <div id="questionCard" class="question-card">
+                <div class="q-title" id="questionTitle"></div>
+                <div class="options" id="optionsContainer"></div>
+            </div>
+
+            <!-- 导航按钮 -->
+            <div class="nav-buttons">
+                <button id="prevBtn" class="nav-btn" disabled>← 上一题</button>
+                <button id="nextBtn" class="nav-btn primary">下一题 →</button>
+            </div>
+            <p class="error-message" id="errorMsg">请选择一个选项再继续哦～</p>
+        </div>
+
+        <!-- 结果区域 -->
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // 题库（保持不变）
+        const questions = [
+            { question: "1. 周末早晨醒来，你希望窗外的景色是怎样的？", options: [{ text: "A. 静谧的雪山下，晨雾笼罩着针叶林", country: "瑞士" },{ text: "B. 热烈的阳光洒在彩色房子上，远处有海浪声", country: "西班牙" },{ text: "C. 现代高楼与古老神社并存，街道干净有序", country: "日本" },{ text: "D. 一望无际的红枫林，空气清冽通透", country: "加拿大" }] },
+            { question: "2. 你理想中的工作状态更接近哪一种？", options: [{ text: "A. 高效紧凑，在竞争中获得成就感", country: "新加坡" },{ text: "B. 创意自由，不拘泥于固定时间地点", country: "意大利" },{ text: "C. 稳定有序，职责分明，下班后就是自己的生活", country: "芬兰" },{ text: "D. 团队协作热烈，充满活力和激情", country: "巴西" }] },
+            { question: "3. 和朋友聚会时，你最喜欢哪种氛围？", options: [{ text: "A. 安静地吃饭、深聊，两三人足矣", country: "日本" },{ text: "B. 热闹的酒吧或派对，大家一起跳舞", country: "巴西" },{ text: "C. 户外烧烤、晒太阳，轻松随意", country: "澳大利亚" },{ text: "D. 在有格调的咖啡馆或小酒馆小酌", country: "意大利" }] },
+            { question: "4. 旅行的方式，你更偏向？", options: [{ text: "A. 精心规划路线，博物馆和古迹一个不落", country: "韩国" },{ text: "B. 说走就走，享受迷路的惊喜", country: "西班牙" },{ text: "C. 独自背包，融入当地人的生活", country: "芬兰" },{ text: "D. 找一个小镇住下，深度感受日常", country: "瑞士" }] },
+            { question: "5. 你更喜欢什么样的饮食体验？", options: [{ text: "A. 精致小巧的菜肴，注重视觉和季节性", country: "日本" },{ text: "B. 丰富多样的前菜拼盘，搭配红酒", country: "意大利" },{ text: "C. 新鲜捕捞的海鲜，简单原味", country: "澳大利亚" },{ text: "D. 烤肉、火锅等热闹的分享式大餐", country: "巴西" }] },
+            { question: "6. 当你感到疲惫时，哪种方式最治愈你？", options: [{ text: "A. 独自在桑拿房里放空，然后跳进湖里", country: "芬兰" },{ text: "B. 在海边散步，让海风吹走烦恼", country: "西班牙" },{ text: "C. 去热闹的集市闲逛，感受人间烟火", country: "韩国" },{ text: "D. 躺在公园草坪上，看云卷云舒", country: "加拿大" }] },
+            { question: "7. 对于“家”的布置，你最看重什么？", options: [{ text: "A. 极简、功能性强，没有任何多余的东西", country: "瑞士" },{ text: "B. 色彩丰富，充满艺术感和手工艺品", country: "意大利" },{ text: "C. 温暖舒适的木质家具，有书香和茶香", country: "日本" },{ text: "D. 有很多绿植，阳光充沛，像个室内花园", country: "新加坡" }] },
+            { question: "8. 你在人际关系中最重视什么？", options: [{ text: "A. 礼貌和边界感，不轻易打扰别人", country: "芬兰" },{ text: "B. 热情坦诚，朋友就是家人", country: "巴西" },{ text: "C. 长久稳定的信任，愿意为朋友两肋插刀", country: "韩国" },{ text: "D. 轻松愉快，保持分寸但随时可以约出来", country: "澳大利亚" }] },
+            { question: "9. 你对气候的偏好是？", options: [{ text: "A. 四季分明，秋天有红叶冬天有雪", country: "瑞士" },{ text: "B. 常年温暖，阳光充足但不会太热", country: "西班牙" },{ text: "C. 凉爽湿润，空气清新", country: "加拿大" },{ text: "D. 热带但高效便利，室内永远舒适", country: "新加坡" }] },
+            { question: "10. 面对一项新技能或知识，你通常怎么学习？", options: [{ text: "A. 按照体系化的课程，一步步进阶", country: "日本" },{ text: "B. 直接上手实践，边做边学", country: "澳大利亚" },{ text: "C. 加入学习小组，互相激励讨论", country: "韩国" },{ text: "D. 沉浸在安静环境里独自钻研", country: "芬兰" }] },
+            { question: "11. 你理想中的城市夜晚是什么样子？", options: [{ text: "A. 霓虹闪烁，24小时不打烊，随时能买到需要的东西", country: "新加坡" },{ text: "B. 人们在广场上散步，街头艺人弹着吉他", country: "意大利" },{ text: "C. 安静安逸，只有便利店和路灯亮着", country: "日本" },{ text: "D. 河岸边聚集着年轻人，放着音乐随性起舞", country: "巴西" }] },
+            { question: "12. 你更欣赏哪种艺术形式？", options: [{ text: "A. 印象派油画，光影与色彩的流动", country: "意大利" },{ text: "B. 极简主义设计，线条与功能的美", country: "瑞士" },{ text: "C. 传统水墨或浮世绘，意境与留白", country: "日本" },{ text: "D. 街头涂鸦和热情奔放的壁画", country: "西班牙" }] },
+            { question: "13. 如果参加一个节日庆典，你最期待哪种体验？", options: [{ text: "A. 漫天烟花，穿着传统服饰逛庙会", country: "韩国" },{ text: "B. 色彩斑斓的狂欢节，花车游行和桑巴", country: "巴西" },{ text: "C. 篝火旁的安静庆祝，聆听大自然的声音", country: "芬兰" },{ text: "D. 葡萄酒节，美食与灯光交错的夜晚", country: "意大利" }] },
+            { question: "14. 对于“规则”的态度，你更接近？", options: [{ text: "A. 规则让社会高效运转，应该遵守", country: "瑞士" },{ text: "B. 规则是死的，人要根据情况灵活变通", country: "意大利" },{ text: "C. 尽量遵守，但不会过分死板", country: "加拿大" },{ text: "D. 表面遵守，私底下有自己的做法", country: "西班牙" }] },
+            { question: "15. 你更想居住在哪里？", options: [{ text: "A. 都市中心的高层公寓，享受顶级便利", country: "新加坡" },{ text: "B. 海边小镇的房子，带一个小花园", country: "西班牙" },{ text: "C. 湖畔的木屋，与自然零距离", country: "芬兰" },{ text: "D. 传统街区里的现代住宅，安静又方便", country: "日本" }] },
+            { question: "16. 在社交中，你通常给人什么印象？", options: [{ text: "A. 初见高冷，熟悉后很温暖", country: "芬兰" },{ text: "B. 开朗大方，很容易和人打成一片", country: "澳大利亚" },{ text: "C. 礼貌周到，有恰到好处的距离感", country: "瑞士" },{ text: "D. 热情似火，表达直接而真诚", country: "巴西" }] },
+            { question: "17. 哪种颜色组合让你感觉最舒服？", options: [{ text: "A. 白、灰、原木色，干净克制", country: "日本" },{ text: "B. 蓝色与白色，清新自由", country: "加拿大" },{ text: "C. 红、黄、橙，浓烈鲜活", country: "西班牙" },{ text: "D. 墨绿与暗金，低调奢华", country: "意大利" }] },
+            { question: "18. 当你面临重要决定时，主要依靠什么？", options: [{ text: "A. 详细的数据分析和理性判断", country: "新加坡" },{ text: "B. 直觉和内心的声音", country: "意大利" },{ text: "C. 咨询信任的朋友和家人", country: "韩国" },{ text: "D. 权衡利弊后，选择最可持续的方案", country: "瑞士" }] },
+            { question: "19. 你理想中的退休生活是？", options: [{ text: "A. 环游世界，在不同的国家短期居住", country: "澳大利亚" },{ text: "B. 在小镇教年轻人手艺，享受慢时光", country: "瑞士" },{ text: "C. 有一块菜地，每天读书、劳作、散步", country: "芬兰" },{ text: "D. 和一大群朋友住得近，每天聚会聊天", country: "巴西" }] },
+            { question: "20. 用一句话总结你的人生哲学？", options: [{ text: "A. “好好生活，保持节奏”", country: "日本" },{ text: "B. “生命在于体验，不要留有遗憾”", country: "西班牙" },{ text: "C. “简单是终极的复杂”", country: "瑞士" },{ text: "D. “爱与被爱是最大的幸福”", country: "韩国" }] }
+        ];
+
+        const countryData = {
+            "日本": { emoji: "🗾", desc: "你骨子里向往一种秩序中的宁静，那种在传统与现代之间优雅平衡的生活。你喜欢细节之美，欣赏克制而深情的温柔。对你来说，最好的日子不是大起大落，而是春天樱花飘落时在便利店买一个饭团，秋天在神社的台阶上听风铃。你重视规则，但不死板；你喜欢独处，也珍惜三两好友的深谈。你向往的城市夜晚是安静而便利的，路灯亮着，便利店温暖地开着，一切井井有条。在工作中你认真负责，按照体系化的步骤精进，不喜欢混乱。人际关系中你外冷内热，需要自己的边界，但一旦认定就会默默守护。你适合一个既尊重个人空间，又有深厚文化底蕴的地方。日本的生活哲学恰好呼应了你对节奏和质感的追求，在那里你可以心安理得地享受独处，也可以在有仪式感的日常里找到小小的幸福。" },
+            "意大利": { emoji: "🇮🇹", desc: "你是一个不折不扣的生活艺术家。对你来说，生命的意义不在于抵达终点，而在于每一口咖啡的香气、每一场漫长的午宴。你讨厌急匆匆的早晨，不愿意把工作带回家，更相信灵感和直觉。你喜欢丰富的色彩、古老街道上的手工艺品、傍晚广场上的散步。朋友聚会时，你要的不是喧闹，而是有格调的小酒馆和红酒搭配的谈天。你常常靠直觉做决定，认为逻辑之外还有人情和美的考量。规则对你来说是参考，你可以灵活变通，甚至带着一点狡黠的浪漫。你不喜欢被束缚，渴望一种创意自由的生活，可能是自由职业，或是一个允许你表达自我的环境。意大利正是你灵魂的镜像：那里有不慌不忙的咖啡时间，有充盈着艺术感的街角，也有足够的人情味。你可以花三小时吃一顿午饭，没有人会觉得奇怪，因为享受当下就是你最大的正经事。" },
+            "瑞士": { emoji: "🇨🇭", desc: "你追求品质、精准和内心的平静。你并不需要很多观众，湖光山色就是最好的陪伴。你喜欢一切都安排得妥当，在规则之下享受最大的自由。极简、功能性强是让你的安心的环境，多余杂物会焦虑。做决定时你会权衡利弊，选择最可持续的方案，很少冲动。社交中你礼貌周全，有恰到好处的距离，初见高冷，其实只是尊重边界。学习时习惯体系化深入，一步一脚印。你向往窗外雪山针叶林、家里原木家具、安静高效的工作。你适合秩序井然、自然优美的地方，没人打乱你的计划。瑞士满足你的安全感和精确度，在那里你能像钟表一样从容，被纯净自然治愈。" },
+            "西班牙": { emoji: "🇪🇸", desc: "你的灵魂是弗拉门戈的节奏，热情、自由、充满生命力。你讨厌无聊和束缚，相信人生就是一场永不落幕的节日。你喜欢热烈的阳光、彩色的房子、海浪的声音。旅行时你更喜欢说走就走，享受迷路带来的惊喜。规则对你来说是可以绕开的栅栏，你总有自己的做法。做决定时你听从直觉和内心的声音，认为体验比正确更重要。你喜欢的社交是热闹真诚的，朋友就是家人，大家挤在一起跳舞、分享塔帕斯。你喜欢的颜色是浓烈鲜活的，红黄橙让你振奋。你理想的家可能在海边小镇，有一个小花园，每天被阳光唤醒。你常觉得生活应该像一场盛大的庆典，有美酒、音乐和深夜的街头闲聊。西班牙完全懂你：那里的午睡是为了更有精力享受夜晚，那里的节日多到好像每一天都值得庆祝。在那里，你的自由灵魂不会被规训，反而会被赞美。" },
+            "加拿大": { emoji: "🇨🇦", desc: "你温和、谦逊、深爱大自然。广袤的森林和清澈的湖泊是你的充电站。你待人友善，尊重多元，不喜欢冲突，更愿意用包容的态度面对世界。你喜欢凉爽湿润的空气、秋天的红叶，躺在公园草坪上看云卷云舒就是你最好的休息。你遵守规则但不会死板，在秩序中保持人性化的温度。你喜欢清新自由的颜色组合，蓝与白让你平静。你理想的家可能是靠近自然的小镇，但也不抗拒现代便利。社交中你开朗大方，容易和人打成一片，但同时也懂得保持分寸，随时可以约出来，但不会过度依赖。工作之余你希望环游世界，在短期旅居中找到生活的弹性。你相信生活不只是打拼，还有诗和远方的枫糖浆。加拿大给了你这样的可能：礼貌友善的社会环境、壮丽的自然风光，以及“Live and let live”的从容。在那里你可以做个温柔而坚定的自己。" },
+            "澳大利亚": { emoji: "🇦🇺", desc: "你天生带着阳光和海盐的味道，随性、乐观、热爱户外。你讨厌过度复杂的事情，相信最美好的东西都是免费的——沙滩、阳光、朋友和烧烤。工作对你来说是生活的一部分，但不是全部，你更看重能否自由支配时间。学习新东西时你喜欢直接动手尝试，边做边学，而不是抱着书本啃理论。社交中你开朗大方，给人的印象是很容易相处，但你又保留着随时抽身去旅行的独立。你喜欢的饮食是新鲜简单，原味海鲜就足够美味。你理想的家可能是海边的小屋，后院就能闻到海风。你厌倦了紧绷的都市，向往一个可以赤脚踩在沙滩上、随时说走就走的地方。澳大利亚恰好满足了你对阳光和自由的渴望，那里的人们尊重每一种生活方式，你可以活得很松弛，却从不觉得无趣。" },
+            "韩国": { emoji: "🇰🇷", desc: "你充满能量，喜欢快节奏的现代感和浓烈的情感联结。你享受深夜的路边摊、KTV和彻夜长谈，那种外冷内热的亲密让你觉得真实。你旅行时会精心规划路线，博物馆和古迹一个不落，你享受把攻略做到极致的那种掌控感。你做重要决定时倾向于咨询信任的家人和朋友，对他们你有极深的忠诚。你喜欢热闹的集市、烟花和庙会，在人群里感受温暖的归属。你理想的家可能在传统街区里的现代公寓，安静但一出门什么都有。你骨子里有种不服输的劲，喜欢在学习中互相竞争、互相激励。韩国像你一样——外表酷酷的，但内里滚烫。那里的快节奏能点燃你的斗志，深夜的热闹能抚慰你的孤独。你会爱上那种在汗蒸房放空、然后凌晨吃一碗泡面回家的生活。" },
+            "巴西": { emoji: "🇧🇷", desc: "你的内心住着热带雨林的自由与奔放。你乐观到骨子里，认为没有什么事是一场派对解决不了的。音乐、舞蹈和密集的社交是你的燃料，日子应该过得像狂欢节一样五彩斑斓。你喜欢分享式的大餐，烤肉火锅，大家围在一起热火朝天。朋友对你来说是家人，热情坦诚是你最看重的品质。你不喜欢冷清，向往河岸边年轻人跳舞、街头音乐不断的夜晚。你的性格给人印象是热情似火，表达直接真诚，从不藏着掖着。你理想中的退休生活是一大群朋友住得近，每天聚会聊天。巴西完全匹配你的能量场：那里的阳光永远充沛，人们见面拥抱亲吻，烦恼在桑巴节奏里烟消云散。你可以做最真实的自己，大大咧咧，快快乐乐，因为那里的人们会告诉你——快乐就是一种天赋。" },
+            "芬兰": { emoji: "🇫🇮", desc: "你珍视个人空间，在安静中汲取力量。你不是不爱热闹，只是更享受独处的深度。桑拿、森林、极光是你理想生活的关键词。你外表冷静，内心却有一团温柔的火焰。你理想的工作是稳定有序，职责分明，下班后完全属于自己。你旅行时喜欢独自背包，融入当地人的生活，而不是走马观花。你学习新东西时喜欢一个人安静钻研，不被打扰。你疲惫时的治愈方式是独自在桑拿房里放空，然后勇敢地跳进冰湖——这种冷热交替的极致体验让你觉得活着。在人际关系中你重视礼貌和边界，不轻易打扰别人，也保护自己的空间。芬兰是世界上个人空间最受尊重的地方之一，那里的沉默不是尴尬，而是一种默契。你可以在森林里散步一整天不说一句话，也可以在湖边的小木屋里过上真正自给自足的生活。" },
+            "新加坡": { emoji: "🇸🇬", desc: "你追求高效、多元和未来感。你喜欢在花园城市里享受最顶级的便利，欣赏不同文化如何和谐共存。你适应力极强，永远保持优雅和前瞻，就像滨海湾的灯光秀，璀璨而精准。你理想中的城市夜晚是霓虹闪烁，24小时不打烊，随时能买到需要的东西。你做决定时依靠详细的数据分析和理性判断，不喜欢模糊。你喜欢的家是都市中心的高层公寓，设施齐全，绿植环绕，像一个室内花园。你学习新东西时喜欢按照体系化课程一步步进阶，对效率有极致追求。新加坡完全懂你的节奏：那里的一切都设计得井井有条，机场像花园，街头美食摊有米其林。你可以在高度现代化的环境里保持竞争力，同时又在热带植物的包围中找到呼吸感。" }
+        };
+
+        let currentIndex = 0;
+        const answers = new Array(questions.length).fill(null);
+        const totalQuestions = questions.length;
+
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const errorMsg = document.getElementById('errorMsg');
+        const testArea = document.getElementById('testArea');
+        const resultDiv = document.getElementById('result');
+        const progressLabel = document.getElementById('progressLabel');
+        const progressPercent = document.getElementById('progressPercent');
+        const progressFill = document.getElementById('progressFill');
+
+        function updateProgress() {
+            const answered = answers.filter(a => a !== null).length;
+            const percent = Math.round((answered / totalQuestions) * 100);
+            progressLabel.textContent = `第 ${currentIndex + 1} / ${totalQuestions} 题`;
+            progressPercent.textContent = `${percent}%`;
+            progressFill.style.width = `${percent}%`;
+        }
+
+        function renderQuestion(index) {
+            const q = questions[index];
+            document.getElementById('questionTitle').textContent = q.question;
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+            q.options.forEach((opt, oidx) => {
+                const label = document.createElement('label');
+                const radio = document.createElement('input');
+                radio.type = 'radio';
+                radio.name = 'currentOption';
+                radio.value = opt.country;
+                if (answers[index] === opt.country) {
+                    radio.checked = true;
+                }
+                radio.addEventListener('change', function() {
+                    answers[index] = opt.country;
+                    errorMsg.style.display = 'none';
+                    updateProgress();
+                });
+                label.appendChild(radio);
+                label.appendChild(document.createTextNode(opt.text));
+                optionsContainer.appendChild(label);
+            });
+
+            // 按钮状态
+            prevBtn.disabled = (index === 0);
+            if (index === totalQuestions - 1) {
+                nextBtn.textContent = '✨ 提交，查看结果';
+                nextBtn.className = 'nav-btn primary';
+            } else {
+                nextBtn.textContent = '下一题 →';
+                nextBtn.className = 'nav-btn primary';
+            }
+
+            updateProgress();
+            // 重置错误提示
+            errorMsg.style.display = 'none';
+        }
+
+        function goToNext() {
+            if (answers[currentIndex] === null) {
+                errorMsg.style.display = 'block';
+                return;
+            }
+            if (currentIndex === totalQuestions - 1) {
+                submitTest();
+                return;
+            }
+            currentIndex++;
+            renderQuestion(currentIndex);
+        }
+
+        function goToPrev() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                renderQuestion(currentIndex);
+            }
+        }
+
+        function submitTest() {
+            // 确保所有题都答了
+            if (answers.includes(null)) {
+                errorMsg.style.display = 'block';
+                return;
+            }
+
+            const scores = {};
+            answers.forEach(country => {
+                scores[country] = (scores[country] || 0) + 1;
+            });
+
+            let maxScore = 0;
+            let resultCountry = "日本";
+            for (let c in scores) {
+                if (scores[c] > maxScore) {
+                    maxScore = scores[c];
+                    resultCountry = c;
+                }
+            }
+
+            const data = countryData[resultCountry];
+            testArea.classList.add('hidden');
+            resultDiv.innerHTML = `
+                <div class="result-emoji">${data.emoji}</div>
+                <div class="result-country">${resultCountry}</div>
+                <div class="divider"></div>
+                <div class="result-desc">${data.desc}</div>
+            `;
+            resultDiv.style.display = 'block';
+            resultDiv.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        nextBtn.addEventListener('click', goToNext);
+        prevBtn.addEventListener('click', goToPrev);
+
+        // 初始渲染
+        renderQuestion(0);
+    </script>
+</body>
+</html>
