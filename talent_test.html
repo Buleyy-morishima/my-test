@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测一测你的天赋类型</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(160deg, #f2f4fd 0%, #e4e8f9 25%, #f5f6fe 50%, #e8ecfa 75%, #f2f4fd 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        .container {
+            max-width: 640px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border-radius: 36px;
+            padding: 36px 28px 44px;
+            box-shadow: 0 25px 60px rgba(60, 80, 160, 0.1), 0 4px 16px rgba(0,0,0,0.03);
+            margin: 20px 0;
+            border: 1px solid rgba(255,255,255,0.6);
+        }
+        h1 {
+            text-align: center;
+            color: #2c3a5a;
+            font-size: 30px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            letter-spacing: 1px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #6a7a9a;
+            margin-bottom: 28px;
+            font-size: 14px;
+            font-weight: 400;
+        }
+        /* 进度条 */
+        .progress-section {
+            margin-bottom: 24px;
+            background: rgba(255,255,255,0.5);
+            border-radius: 16px;
+            padding: 14px 16px;
+            backdrop-filter: blur(10px);
+        }
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: #5a6a8a;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+        .progress-bar {
+            height: 8px;
+            background: #d6e0f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #8aa0d0, #6a80b0, #4a6090);
+            border-radius: 10px;
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 0%;
+            box-shadow: 0 0 10px rgba(100, 130, 180, 0.4);
+        }
+        /* 题目卡片 */
+        .question-card {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 28px;
+            padding: 32px 24px;
+            box-shadow: 0 12px 35px rgba(50, 70, 130, 0.07), 0 2px 8px rgba(0,0,0,0.03);
+            min-height: 260px;
+            animation: fadeSlide 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            border: 1px solid rgba(255,255,255,0.7);
+            position: relative;
+            overflow: hidden;
+        }
+        .question-card::before {
+            content: '';
+            position: absolute;
+            top: -40px;
+            right: -40px;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, rgba(120, 140, 200, 0.12) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        @keyframes fadeSlide {
+            from { opacity: 0; transform: translateX(25px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        .q-title {
+            font-weight: 700;
+            color: #1f2a40;
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 28px;
+            position: relative;
+            z-index: 1;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 13px;
+            position: relative;
+            z-index: 1;
+        }
+        label {
+            display: flex;
+            align-items: flex-start;
+            padding: 16px 18px;
+            background: #f7f9fd;
+            border: 2px solid transparent;
+            border-radius: 18px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            font-size: 15px;
+            color: #2c3a5a;
+        }
+        label:hover {
+            background: #f0f4fe;
+            border-color: #b8c8e0;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 14px rgba(80, 100, 160, 0.06);
+        }
+        input[type="radio"] {
+            appearance: none;
+            -webkit-appearance: none;
+            min-width: 22px;
+            width: 22px;
+            height: 22px;
+            border: 2px solid #a0b0d0;
+            border-radius: 50%;
+            margin-right: 14px;
+            margin-top: 1px;
+            cursor: pointer;
+            transition: all 0.25s;
+        }
+        input[type="radio"]:checked {
+            background: #6a80b0;
+            border-color: #4a6090;
+            box-shadow: inset 0 0 0 5px white, 0 0 0 4px rgba(106, 128, 176, 0.2);
+        }
+        /* 导航按钮 */
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 28px;
+            gap: 14px;
+        }
+        .nav-btn {
+            padding: 15px 32px;
+            font-size: 16px;
+            font-weight: 600;
+            border: 2px solid #a0b0d0;
+            background: rgba(255,255,255,0.7);
+            backdrop-filter: blur(10px);
+            color: #2c3a5a;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.25s;
+            letter-spacing: 0.5px;
+        }
+        .nav-btn:hover:not(:disabled) {
+            background: rgba(255,255,255,0.95);
+            border-color: #6a80b0;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(60, 80, 140, 0.1);
+        }
+        .nav-btn:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+        }
+        .nav-btn.primary {
+            background: #4a6090;
+            color: white;
+            border-color: #4a6090;
+            box-shadow: 0 8px 22px rgba(60, 80, 140, 0.25);
+        }
+        .nav-btn.primary:hover:not(:disabled) {
+            background: #6a80b0;
+            border-color: #6a80b0;
+            box-shadow: 0 12px 28px rgba(60, 80, 140, 0.35);
+        }
+        /* 结果区 */
+        #result {
+            display: none;
+            padding: 36px 28px;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 32px;
+            margin-top: 28px;
+            text-align: center;
+            box-shadow: 0 20px 45px rgba(40, 60, 120, 0.1);
+            animation: fadeInUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+            border: 1px solid rgba(255,255,255,0.7);
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .result-icon {
+            font-size: 72px;
+            margin-bottom: 10px;
+        }
+        .result-type {
+            font-size: 36px;
+            font-weight: 700;
+            color: #4a6090;
+            margin: 14px 0 8px;
+            letter-spacing: 2px;
+        }
+        .result-subtitle {
+            font-size: 15px;
+            color: #6a7a9a;
+            margin-bottom: 20px;
+        }
+        .divider {
+            width: 60px;
+            height: 3px;
+            background: #8aa0d0;
+            margin: 0 auto 26px;
+            border-radius: 2px;
+            opacity: 0.7;
+        }
+        .result-desc {
+            font-size: 16px;
+            line-height: 2;
+            text-align: left;
+            color: #1f2a40;
+            margin: 0;
+            padding: 0 4px;
+        }
+        .result-detail {
+            margin-top: 24px;
+            background: #f2f4fd;
+            border-radius: 16px;
+            padding: 20px;
+            text-align: left;
+            font-size: 14px;
+            line-height: 1.8;
+            color: #3a4a6a;
+        }
+        .result-detail span {
+            font-weight: 700;
+            color: #4a6090;
+        }
+        .error-message {
+            color: #c44;
+            text-align: center;
+            margin-top: 14px;
+            display: none;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        .test-area.hidden { display: none; }
+        @media (max-width: 500px) {
+            .container { padding: 24px 18px; border-radius: 28px; }
+            h1 { font-size: 24px; }
+            .question-card { padding: 24px 18px; }
+            .nav-btn { padding: 13px 22px; font-size: 15px; }
+            .result-type { font-size: 28px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧠 测一测你的天赋类型</h1>
+        <p class="subtitle">20道题 · 基于多元智能理论 · 发现你隐藏的才能</p>
+
+        <div id="testArea" class="test-area">
+            <div class="progress-section">
+                <div class="progress-info">
+                    <span id="progressLabel">第 1 / 20 题</span>
+                    <span id="progressPercent">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div id="progressFill" class="progress-fill" style="width: 0%;"></div>
+                </div>
+            </div>
+            <div id="questionCard" class="question-card">
+                <div class="q-title" id="questionTitle"></div>
+                <div class="options" id="optionsContainer"></div>
+            </div>
+            <div class="nav-buttons">
+                <button id="prevBtn" class="nav-btn" disabled>← 上一题</button>
+                <button id="nextBtn" class="nav-btn primary">下一题 →</button>
+            </div>
+            <p class="error-message" id="errorMsg">请选择一个选项再继续哦～</p>
+        </div>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const questions = [
+            { question: "1. 小时候你最喜欢哪种类型的活动？",
+              options: [
+                { text: "A. 拆玩具再装回去，观察内部结构", type: "洞察者" },
+                { text: "B. 自己编故事、画漫画，创造不存在的世界", type: "创想家" },
+                { text: "C. 组织小伙伴玩过家家，分配角色", type: "架构师" },
+                { text: "D. 模仿电视里的表演，给大人唱歌跳舞", type: "表达者" }
+            ]},
+            { question: "2. 遇到一个难题，你的第一反应是？",
+              options: [
+                { text: "A. 静下来分析原因，拆解成几个小问题", type: "洞察者" },
+                { text: "B. 脑暴各种可能性，哪怕听起来离谱", type: "创想家" },
+                { text: "C. 先了解别人是怎么解决的，再制定计划", type: "架构师" },
+                { text: "D. 直接动手尝试，边做边调整", type: "实践家" }
+            ]},
+            { question: "3. 朋友向你倾诉烦恼，你通常？",
+              options: [
+                { text: "A. 帮他理清头绪，找到烦恼的根源", type: "洞察者" },
+                { text: "B. 用比喻和故事让他看到不同视角", type: "创想家" },
+                { text: "C. 先安抚情绪，让他感觉被真正理解", type: "共鸣师" },
+                { text: "D. 提出具体可行的解决方案", type: "实践家" }
+            ]},
+            { question: "4. 哪种工作场景让你更有动力？",
+              options: [
+                { text: "A. 独立研究一个复杂课题，没人打扰", type: "洞察者" },
+                { text: "B. 头脑风暴会，大家抛出各种疯狂点子", type: "创想家" },
+                { text: "C. 统筹一个项目，确保每个环节顺利衔接", type: "架构师" },
+                { text: "D. 站上舞台或镜头前，表达自己的观点", type: "表达者" }
+            ]},
+            { question: "5. 看书或学习时，你最容易被什么吸引？",
+              options: [
+                { text: "A. 精妙的逻辑推导，让人豁然开朗的洞见", type: "洞察者" },
+                { text: "B. 独特的想象力和新颖的视角", type: "创想家" },
+                { text: "C. 清晰的结构框架，让我能系统掌握", type: "架构师" },
+                { text: "D. 生动的人物故事和情感描写", type: "共鸣师" }
+            ]},
+            { question: "6. 别人对你的评价中，你觉得最准确的是？",
+              options: [
+                { text: "A. “你想问题很深，能一眼看到本质”", type: "洞察者" },
+                { text: "B. “你脑子里总是有各种奇思妙想”", type: "创想家" },
+                { text: "C. “有你在就安心，你总能安排得井井有条”", type: "架构师" },
+                { text: "D. “你说话很有感染力，大家愿意听你讲”", type: "表达者" }
+            ]},
+            { question: "7. 面对一个空白的周末，你更可能？",
+              options: [
+                { text: "A. 研究一个自己好奇已久的话题", type: "洞察者" },
+                { text: "B. 随意涂鸦、写作，或者做点创意手工", type: "创想家" },
+                { text: "C. 整理房间，优化一下收纳和日程安排", type: "架构师" },
+                { text: "D. 约朋友来家里，或者出门认识新朋友", type: "共鸣师" }
+            ]},
+            { question: "8. 在团队合作中，你通常扮演什么角色？",
+              options: [
+                { text: "A. 那个提出问题核心、让大家不走偏的人", type: "洞察者" },
+                { text: "B. 那个提供新思路、打破僵局的人", type: "创想家" },
+                { text: "C. 那个制定计划、盯进度的人", type: "架构师" },
+                { text: "D. 那个实际操作、把想法落地的人", type: "实践家" }
+            ]},
+            { question: "9. 你觉得自己最大的优势是？",
+              options: [
+                { text: "A. 能够在复杂信息中抓住关键线索", type: "洞察者" },
+                { text: "B. 善于跨界联想，把看似无关的东西联系起来", type: "创想家" },
+                { text: "C. 能敏锐感知他人的情绪和需求", type: "共鸣师" },
+                { text: "D. 行动力强，想到的事情马上去做", type: "实践家" }
+            ]},
+            { question: "10. 如果让你选择一种超能力，你会选？",
+              options: [
+                { text: "A. 看穿一切表象的透视能力", type: "洞察者" },
+                { text: "B. 把想法变成现实画面的能力", type: "创想家" },
+                { text: "C. 让他人瞬间信任和敞开心扉的能力", type: "共鸣师" },
+                { text: "D. 让一切混乱自动变得有序的能力", type: "架构师" }
+            ]},
+            { question: "11. 你更欣赏哪种类型的人？",
+              options: [
+                { text: "A. 沉默但总能一语中的的思考者", type: "洞察者" },
+                { text: "B. 天马行空但想法让人拍案叫绝的创意人", type: "创想家" },
+                { text: "C. 热心周到、让人如沐春风的温暖的人", type: "共鸣师" },
+                { text: "D. 说到做到、执行力超强的实干家", type: "实践家" }
+            ]},
+            { question: "12. 对“灵感”这件事，你的体验更接近？",
+              options: [
+                { text: "A. 灵感往往来自长时间的深度思考后的一瞬间", type: "洞察者" },
+                { text: "B. 灵感随时出现，经常在洗澡或散步时蹦出来", type: "创想家" },
+                { text: "C. 灵感来自和人聊天，碰撞中产生火花", type: "共鸣师" },
+                { text: "D. 灵感通常在动手做的过程中自然涌现", type: "实践家" }
+            ]},
+            { question: "13. 对于陌生的新领域，你通常？",
+              options: [
+                { text: "A. 先搞懂底层逻辑和原理", type: "洞察者" },
+                { text: "B. 被各种可能性吸引，兴奋地到处尝试", type: "创想家" },
+                { text: "C. 找一个有经验的人带着入门", type: "共鸣师" },
+                { text: "D. 先动手做一个小项目，在实战中学习", type: "实践家" }
+            ]},
+            { question: "14. 你更容易记住什么？",
+              options: [
+                { text: "A. 事情的规律和逻辑关系", type: "洞察者" },
+                { text: "B. 画面、色彩和独特的细节", type: "创想家" },
+                { text: "C. 当时的情感氛围和对话内容", type: "共鸣师" },
+                { text: "D. 做过的事和身体的感受", type: "实践家" }
+            ]},
+            { question: "15. 压力大的时候，最好的解压方式是？",
+              options: [
+                { text: "A. 独处，把脑子里的乱麻一根根理清", type: "洞察者" },
+                { text: "B. 沉浸在一部电影、一本小说或音乐里", type: "创想家" },
+                { text: "C. 找亲密的朋友倾诉，获得安慰", type: "共鸣师" },
+                { text: "D. 运动、做手工或者整理房间", type: "实践家" }
+            ]},
+            { question: "16. 你对“未来”的态度更接近？",
+              options: [
+                { text: "A. 喜欢预判趋势，提前做好准备", type: "洞察者" },
+                { text: "B. 充满好奇，期待各种不确定性的展开", type: "创想家" },
+                { text: "C. 希望能够帮助到更多人，留下温暖的影响", type: "共鸣师" },
+                { text: "D. 相信一步一个脚印，做好当下就是未来", type: "实践家" }
+            ]},
+            { question: "17. 一个项目刚开始，你最兴奋的是？",
+              options: [
+                { text: "A. 研究这个问题的本质，找到切入点", type: "洞察者" },
+                { text: "B. 构思各种可能的方向，画草图", type: "创想家" },
+                { text: "C. 组建团队，分配角色，制定时间表", type: "架构师" },
+                { text: "D. 挽起袖子直接开干，做出第一个版本", type: "实践家" }
+            ]},
+            { question: "18. 如果写一本关于自己的书，书名更可能是？",
+              options: [
+                { text: "A. 《我如何学会观察世界》", type: "洞察者" },
+                { text: "B. 《我脑中那些奇怪的念头》", type: "创想家" },
+                { text: "C. 《我与你的每一次深度对话》", type: "共鸣师" },
+                { text: "D. 《从想法到落地：我的实践日记》", type: "实践家" }
+            ]},
+            { question: "19. 你最不想被误解成什么样的人？",
+              options: [
+                { text: "A. 肤浅、随波逐流的人", type: "洞察者" },
+                { text: "B. 没有想象力、只会按部就班的人", type: "创想家" },
+                { text: "C. 冷漠、不懂得关心他人的人", type: "共鸣师" },
+                { text: "D. 光说不做、只会画饼的人", type: "实践家" }
+            ]},
+            { question: "20. 用一句话描述你的天赋内核？",
+              options: [
+                { text: "A. “我能看见别人看不见的脉络”", type: "洞察者" },
+                { text: "B. “我能把星星连成星座”", type: "创想家" },
+                { text: "C. “我能让两个频率重新共振”", type: "共鸣师" },
+                { text: "D. “我能把蓝图变成地基”", type: "实践家" }
+            ]}
+        ];
+
+        const resultData = {
+            "洞察者": {
+                icon: "🔍",
+                subtitle: "你的天赋是看透复杂，直抵本质",
+                desc: "你拥有一种罕见的思维穿透力。面对混沌的信息，别人还在迷雾中摸索，你已经快速识别出关键变量和隐藏的因果链。你从小就喜欢问“为什么”，并且不满足于表面的答案。你不一定会第一个发言，但你开口时，往往让所有人恍然大悟。你的头脑像一个精密的分析引擎，善于拆解系统、发现规律、预判走向。这种天赋让你在战略、研究、诊断、策划等领域有天然优势。适合你的伴侣或伙伴，是一个能欣赏你深度、不觉得你“想太多”的人。请保护好自己的专注力，你的天赋在安静和深度中才能绽放。不要害怕被说“太理性”，因为这个时代稀缺的，正是你这样的洞察者。",
+                detail: "<span>天赋密码：</span>你的核心优势在于逻辑分析、模式识别和深度思考。你在复杂问题面前保持冷静，善于从现象中提炼本质。建议你选择需要智识深度的工作，如研究员、分析师、战略顾问、心理咨询师等。你的天赋需要不断用新知识喂养，保持好奇心会让你的洞察力持续进化。"
+            },
+            "创想家": {
+                icon: "💡",
+                subtitle: "你的天赋是打破边界，创造可能",
+                desc: "你的大脑不是一个储存器，而是一个生成器。你看到A和B，就能联想到C、D、E。你不习惯循规蹈矩，因为你天然觉得“也许还有另一种做法”。你喜欢发散思维，享受灵感冒出来的瞬间，经常在别人觉得毫无关联的事物之间找到美妙的联系。你可能小时候被说过“注意力不集中”，但其实你只是对这个世界有太多好奇。你的天赋在创意行业、产品创新、艺术表达和任何需要跳出框架的场景里都是稀缺资源。适合你的伴侣，是一个欣赏你与众不同、愿意陪你一起疯的人。请记住，你的创意不是胡思乱想，而是未来可能性的种子。大胆去想，然后找一个实践家帮你落地。",
+                detail: "<span>天赋密码：</span>你的核心优势在于想象力、联想力和开放性思维。你善于打破常规框架，创造出全新的概念和体验。建议你从事需要创意的领域，如设计、写作、策划、发明或创业。你的天赋需要自由的空间，给自己留出不被打扰的发呆时间，那其实是灵感的土壤。"
+            },
+            "共鸣师": {
+                icon: "🫂",
+                subtitle: "你的天赋是感知情绪，连接心灵",
+                desc: "你能敏锐地捕捉到空气中最细微的情绪变化。别人说了什么、没说什么、为什么这样说——你常常比当事人还清楚。这种天赋让你成为极好的倾听者、朋友和伴侣。你擅长安抚、理解和引导他人，因为你不仅听到了话，更听到了话背后的渴望和恐惧。你或许曾被人说“太敏感”，但这份敏感正是你的天赋所在。在这个越来越孤独的世界里，你能让一个人感觉被真正看见。你适合从事与人深度连接的工作，如心理咨询、教育、教练、社工等。适合你的伴侣，是一个懂得珍惜你的温柔、不会把你的敏感当成负担的人。请保护好你的共情力，它不是弱点，而是你独一无二的礼物。",
+                detail: "<span>天赋密码：</span>你的核心优势在于共情、倾听和人际连接。你能快速建立信任关系，让人感到安全和被理解。建议你投身需要高情商的事业，同时注意建立情绪边界，不要过度吸收他人的情绪。你的天赋在这个人际关系日益疏离的时代里，具有极大的治愈价值。"
+            },
+            "架构师": {
+                icon: "🏗️",
+                subtitle: "你的天赋是搭建系统，让一切有序",
+                desc: "你天生就喜欢把混乱变得有序。别人看到一团乱麻感到焦虑，你看到的是可优化的系统。你擅长把模糊的目标拆解成清晰的步骤，把零散的元素组合成有机的整体。无论是组织一个活动、管理一个团队、还是规划人生，你都有一种自然而然的“架构感”。你重视结构、流程和效率，但并非死板；你懂得好的架构是为了释放自由。你在管理、运营、工程项目和任何需要系统性思维的地方都是中流砥柱。适合你的伴侣，是一个能理解你为何需要规划、但也偶尔能拉你放松一下的人。你的天赋让周围的世界更可靠——请为自己骄傲，因为你是那个默默让一切正常运转的人。",
+                detail: "<span>天赋密码：</span>你的核心优势在于组织、规划和系统搭建。你善于把复杂任务分解为可执行的模块，并确保每个环节衔接顺畅。建议你从事项目策划、运营管理、系统工程等领域。你的天赋需要被用在有足够复杂度的挑战上，否则你会感到无聊。"
+            },
+            "表达者": {
+                icon: "🎙️",
+                subtitle: "你的天赋是输出价值，感染他人",
+                desc: "你有强烈的表达欲望，并且确实有能力感染他人。无论是语言、文字、画面还是肢体，你总能找到一种方式把你的思想传递出去，并引发回响。你站在人群前面时会发光，你的话语能点燃别人心中的火焰。你可能从小就在演讲、写作或表演方面有过人表现。你的天赋在于将抽象的想法转化为具象的、打动人心的表达。在自媒体、教学、演艺、销售等需要影响力的领域，你拥有天然优势。适合你的伴侣，是一个真正愿意听你说话、并且能给你真诚反馈的人。请不断打磨你的表达技艺，因为你的声音就是你的力量。不要害怕被看见，你值得拥有舞台。",
+                detail: "<span>天赋密码：</span>你的核心优势在于语言表达、艺术感染力和影响力。你善于把信息加工成有吸引力的内容，让人愿意倾听并产生共鸣。建议你深耕表达相关的职业，同时不断输入高质量内容以保持输出的新鲜度。你的天赋需要观众，勇敢站出去。"
+            },
+            "实践家": {
+                icon: "🔧",
+                subtitle: "你的天赋是动手实现，把想法落地",
+                desc: "你相信行胜于言。当别人还在讨论“要不要做”的时候，你已经做出了第一个粗糙但完整的版本。你不害怕失败，因为对你来说每一次尝试都是数据。你拥有强大的动手能力和执行力，能把蓝图变成地基、把概念变成产品。你可能被误解为“没想清楚就行动”，但其实你的思考方式是“在做的过程中想清楚”。你的天赋在工程、手艺、运动、餐饮以及任何需要实际产出的领域都闪闪发光。适合你的伴侣，是一个会为你做的饭菜点赞、会珍惜你每一件手工作品的人。请继续骄傲地动手去做，因为你正是这个世界里少数能真正改变物理现实的人。",
+                detail: "<span>天赋密码：</span>你的核心优势在于行动力、动手能力和问题解决。你擅长把抽象的概念转化为具体的成果，在试错中快速迭代。建议你从事产品开发、技术实现、艺术创作或任何需要实干的职业。你的天赋需要被看到成果，给自己设定小目标，你会越来越强。"
+            }
+        };
+
+        // 翻页逻辑
+        let currentIndex = 0;
+        const totalQuestions = questions.length;
+        const answers = new Array(totalQuestions).fill(null);
+
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const errorMsg = document.getElementById('errorMsg');
+        const testArea = document.getElementById('testArea');
+        const resultDiv = document.getElementById('result');
+        const progressLabel = document.getElementById('progressLabel');
+        const progressPercent = document.getElementById('progressPercent');
+        const progressFill = document.getElementById('progressFill');
+
+        function updateProgress() {
+            const answeredCount = answers.filter(a => a !== null).length;
+            const percent = Math.round((answeredCount / totalQuestions) * 100);
+            progressLabel.textContent = `第 ${currentIndex + 1} / ${totalQuestions} 题`;
+            progressPercent.textContent = `${percent}%`;
+            progressFill.style.width = `${percent}%`;
+        }
+
+        function renderQuestion(index) {
+            const q = questions[index];
+            document.getElementById('questionTitle').textContent = q.question;
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+            q.options.forEach(opt => {
+                const label = document.createElement('label');
+                const radio = document.createElement('input');
+                radio.type = 'radio';
+                radio.name = 'currentOption';
+                radio.value = opt.type;
+                if (answers[index] === opt.type) radio.checked = true;
+                radio.addEventListener('change', function() {
+                    answers[index] = opt.type;
+                    errorMsg.style.display = 'none';
+                    updateProgress();
+                });
+                label.appendChild(radio);
+                label.appendChild(document.createTextNode(opt.text));
+                optionsContainer.appendChild(label);
+            });
+            prevBtn.disabled = (index === 0);
+            if (index === totalQuestions - 1) {
+                nextBtn.textContent = '✨ 提交，发现我的天赋';
+                nextBtn.className = 'nav-btn primary';
+            } else {
+                nextBtn.textContent = '下一题 →';
+                nextBtn.className = 'nav-btn primary';
+            }
+            updateProgress();
+            errorMsg.style.display = 'none';
+        }
+
+        function goToNext() {
+            if (answers[currentIndex] === null) {
+                errorMsg.style.display = 'block';
+                return;
+            }
+            if (currentIndex === totalQuestions - 1) {
+                submitTest();
+                return;
+            }
+            currentIndex++;
+            renderQuestion(currentIndex);
+        }
+
+        function goToPrev() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                renderQuestion(currentIndex);
+            }
+        }
+
+        function submitTest() {
+            if (answers.includes(null)) {
+                errorMsg.style.display = 'block';
+                return;
+            }
+            const scores = {};
+            answers.forEach(type => {
+                scores[type] = (scores[type] || 0) + 1;
+            });
+            let maxScore = 0;
+            let resultType = "洞察者";
+            for (let t in scores) {
+                if (scores[t] > maxScore) {
+                    maxScore = scores[t];
+                    resultType = t;
+                }
+            }
+            const data = resultData[resultType];
+            testArea.classList.add('hidden');
+            resultDiv.innerHTML = `
+                <div class="result-icon">${data.icon}</div>
+                <div class="result-type">${resultType}</div>
+                <div class="result-subtitle">${data.subtitle}</div>
+                <div class="divider"></div>
+                <div class="result-desc">${data.desc}</div>
+                <div class="result-detail">${data.detail}</div>
+            `;
+            resultDiv.style.display = 'block';
+            resultDiv.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        nextBtn.addEventListener('click', goToNext);
+        prevBtn.addEventListener('click', goToPrev);
+
+        document.addEventListener('keydown', function(e) {
+            if (testArea.classList.contains('hidden')) return;
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+                e.preventDefault();
+                goToNext();
+            } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                e.preventDefault();
+                goToPrev();
+            }
+        });
+
+        renderQuestion(0);
+    </script>
+</body>
+</html>
